@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { spots, typeLabels } from '@/lib/data'
 import { formatKRW, formatKRWtoTWD, getTypeColor, getTypeIcon, minutesToHoursText } from '@/lib/utils'
 import { Dish } from '@/lib/types'
+import GoogleMap from '@/components/GoogleMap'
 
 export function generateStaticParams() {
   return spots.map(s => ({ slug: s.slug }))
@@ -270,6 +271,17 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
               </div>
             </div>
           )}
+
+          {/* Google Map */}
+          <div>
+            <h3 className="font-bold text-gray-900 mb-3">📍 地圖位置</h3>
+            <GoogleMap
+              lat={spot.lat}
+              lng={spot.lng}
+              name={spot.name_ko}
+              address={spot.address_ko}
+            />
+          </div>
 
           {/* Tags */}
           {spot.tags && spot.tags.length > 0 && (
