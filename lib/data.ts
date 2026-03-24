@@ -32,10 +32,10 @@ export const spots: Spot[] = [
     reservation_required: true,
     reservation_links: [
       {
-        platform: 'Catch Table',
-        url: 'https://www.catchtable.co.kr/ct/restaurants/search?keyword=리브스+오브+레전드+해운대',
-        label: '前往 Catch Table 訂位',
-        note: '建議提前 1-2 週預約，尤其週末',
+        platform: 'Naver',
+        url: 'https://map.naver.com/v5/search/%EB%A6%AC%EB%B8%8C%EC%8A%A4+%EC%98%A4%EB%B8%8C+%EB%A0%88%EC%A0%84%EB%93%9C+%ED%95%B4%EC%9A%B4%EB%8C%80',
+        label: 'Naver Map 查看店家資訊',
+        note: '此餐廳建議電話或現場訂位，或在 Catch Table App 搜尋「리브스 오브 레전드」',
       },
     ],
     recommended_dishes: [
@@ -84,15 +84,10 @@ export const spots: Spot[] = [
     reservation_required: true,
     reservation_links: [
       {
-        platform: 'Catch Table',
-        url: 'https://www.catchtable.co.kr/ct/restaurants/search?keyword=해적쌀롱+해운대',
-        label: '前往 Catch Table 訂位',
-        note: '週末一位難求，建議提前訂',
-      },
-      {
         platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/해적쌀롱+해운대본점',
-        label: '在 Naver Map 查看',
+        url: 'https://map.naver.com/v5/search/%ED%95%B4%EC%A0%81%EC%8C%80%EB%A1%B1+%ED%95%B4%EC%9A%B4%EB%8C%80%EB%B3%B8%EC%A0%90',
+        label: 'Naver Map 查看店家資訊',
+        note: '此餐廳建議電話或現場訂位，或在 Catch Table App 搜尋「해적쌀롱」',
       },
     ],
     recommended_dishes: [
@@ -143,9 +138,15 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://www.catchtable.co.kr/ct/restaurants/search?keyword=해목+부산',
+        url: 'https://app.catchtable.co.kr/ct/shop/Y2F0Y2hfeFFMalYxSWhPTm5PLythNWYwNTB2Zz09',
         label: '前往 Catch Table 訂位',
         note: '米其林名店旺季可能需提前 2 週',
+      },
+      {
+        platform: 'Tabling',
+        url: 'https://www.tabling.co.kr/restaurant/2124',
+        label: 'Tabling 線上候位',
+        note: '可遠端加入候位，減少現場等待',
       },
     ],
     recommended_dishes: [
@@ -206,9 +207,10 @@ export const spots: Spot[] = [
         note: '可線上加入候位，不用現場排隊',
       },
       {
-        platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/맛찬들왕소금구이+서면',
-        label: 'Naver Map 查看等位',
+        platform: 'Tabling',
+        url: 'https://www.tabling.co.kr/restaurant/2116',
+        label: 'Tabling 線上候位',
+        note: '遠端候位，到附近再去取號',
       },
     ],
     recommended_dishes: [
@@ -260,8 +262,9 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/개금밀면',
-        label: 'Naver Map 查看',
+        url: 'https://map.naver.com/v5/search/%EA%B0%9C%EA%B8%88%EB%B0%80%EB%A9%B4',
+        label: 'Naver Map 查看位置',
+        note: '無需訂位，直接前往，建議避開午餐尖峰',
       },
     ],
     recommended_dishes: [
@@ -313,8 +316,9 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/맛찬들왕소금구이+해운대',
+        url: 'https://map.naver.com/v5/search/%EB%A7%9B%EC%B0%AC%EB%93%A4%EC%99%95%EC%86%8C%EA%B8%88%EA%B5%AC%EC%9D%B4+%ED%95%B4%EC%9A%B4%EB%8C%80',
         label: 'Naver Map 查看等位',
+        note: '現場取號等候，可線上確認等待人數',
       },
     ],
     recommended_dishes: [
@@ -515,12 +519,12 @@ export const spots: Spot[] = [
       },
       {
         platform: 'KKday',
-        url: 'https://www.kkday.com/zh-tw/product/2517',
+        url: 'https://www.kkday.com/en-us/product/2880-sea-life-busan-aquarium-tickets-korea',
         label: 'KKday 購票',
       },
       {
         platform: 'Klook',
-        url: 'https://www.klook.com/zh-TW/activity/2567-sea-life-busan-aquarium-ticket-busan/',
+        url: 'https://www.klook.com/en-US/activity/1251-sea-life-aquarium-busan/',
         label: 'Klook 購票',
       },
     ],
@@ -612,7 +616,7 @@ export const spots: Spot[] = [
       },
       {
         platform: 'KKday',
-        url: 'https://www.kkday.com/zh-tw/product/123012',
+        url: 'https://www.kkday.com/en-us/product/123012-haeundae-blueline-park-beach-train-sky-capsule-ticket-korea',
         label: 'KKday 購票',
       },
     ],
@@ -658,17 +662,17 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Official',
-        url: 'https://adventure.lotteworld.com/eng/',
+        url: 'https://adventure.lotteworld.com/eng/price/gstt/information/list.do',
         label: '官網購票',
       },
       {
         platform: 'KKday',
-        url: 'https://www.kkday.com/zh-tw/product/19482',
+        url: 'https://www.kkday.com/en/product/19296-busan-lotte-world-adventure-tickets-korea',
         label: 'KKday 購票（可享優惠）',
       },
       {
         platform: 'Klook',
-        url: 'https://www.klook.com/zh-TW/activity/13428-lotte-world-adventure-busan/',
+        url: 'https://www.klook.com/en-US/activity/75094-lotte-world-busan/',
         label: 'Klook 購票',
       },
     ],
@@ -714,12 +718,13 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Official',
-        url: 'https://www.shinsegae.com',
-        label: '新世界官網',
+        url: 'https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=217965',
+        label: '外國旅客折扣券說明',
+        note: '持護照至B1外國顧客服務台領取，現場兌換',
       },
       {
         platform: 'KKday',
-        url: 'https://www.kkday.com/zh-tw/product/35042',
+        url: 'https://www.kkday.com/en/product/35042-kidzania-busan-tickets-korea',
         label: 'KKday 購買 KidZania 門票',
       },
     ],
@@ -769,12 +774,12 @@ export const spots: Spot[] = [
       },
       {
         platform: 'Klook',
-        url: 'https://www.klook.com/zh-TW/activity/81576-visit-busan-pass/',
+        url: 'https://www.klook.com/en-US/activity/81576-visit-busan-pass/',
         label: 'Klook 購買',
       },
       {
         platform: 'KKday',
-        url: 'https://www.kkday.com/zh-tw/product/145568',
+        url: 'https://www.kkday.com/en/product/145568-visit-busan-pass',
         label: 'KKday 購買',
       },
     ],

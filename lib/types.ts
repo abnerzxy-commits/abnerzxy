@@ -23,7 +23,7 @@ export interface OpeningHours {
 }
 
 export interface ReservationLink {
-  platform: 'Catch Table' | 'KKday' | 'Klook' | 'Official' | 'AutoReserve' | 'Naver' | 'Email'
+  platform: 'Catch Table' | 'KKday' | 'Klook' | 'Official' | 'AutoReserve' | 'Naver' | 'Tabling' | 'Email'
   url: string
   label: string
   note?: string

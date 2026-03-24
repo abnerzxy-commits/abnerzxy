@@ -9,6 +9,7 @@ const platformColors: Record<string, string> = {
   'Official':    'bg-blue-600 hover:bg-blue-700 text-white',
   'AutoReserve': 'bg-purple-600 hover:bg-purple-700 text-white',
   'Naver':       'bg-emerald-600 hover:bg-emerald-700 text-white',
+  'Tabling':     'bg-sky-600 hover:bg-sky-700 text-white',
   'Email':       'bg-gray-600 hover:bg-gray-700 text-white',
 }
 
@@ -19,6 +20,7 @@ const platformIcons: Record<string, string> = {
   'Official':    '🌐',
   'AutoReserve': '📋',
   'Naver':       '🗺',
+  'Tabling':     '📲',
   'Email':       '✉️',
 }
 
@@ -104,6 +106,11 @@ export default function ReservationSection({ links, reservationRequired, name }:
       </div>
 
       {/* Catch Table hint */}
+      {links.some(l => l.platform === 'Tabling') && (
+        <div className="mt-3 text-xs text-gray-400 bg-gray-50 rounded-xl px-3 py-2">
+          💡 Tabling 是韓國熱門候位 App，可遠端加入等位名單，到附近再去取號，省去現場枯等時間。
+        </div>
+      )}
       {links.some(l => l.platform === 'Catch Table') && (
         <div className="mt-3 text-xs text-gray-400 bg-gray-50 rounded-xl px-3 py-2">
           💡 Catch Table 是韓國最大訂位平台，支援繁中介面。下載 App 搜尋「{name}」即可查看空位日曆。
