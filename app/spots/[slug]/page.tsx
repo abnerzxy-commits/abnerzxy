@@ -200,6 +200,28 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
             </section>
           )}
 
+          {/* Staff Phrases */}
+          {spot.staff_phrases && spot.staff_phrases.length > 0 && (
+            <section>
+              <h2 className="text-xl font-bold text-gray-900 mb-2">👆 指給店員看</h2>
+              <p className="text-sm text-gray-400 mb-4">點選句子可複製，或直接拿手機給店員看</p>
+              <div className="space-y-3">
+                {spot.staff_phrases.map((phrase, i) => (
+                  <div key={i} className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
+                    <div className="px-4 py-2 bg-gray-100 border-b border-gray-200">
+                      <p className="text-xs text-gray-500 font-medium">{phrase.situation}</p>
+                    </div>
+                    <div className="px-4 py-4">
+                      <p className="text-3xl font-bold text-gray-900 leading-tight tracking-wide select-all">
+                        {phrase.korean}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
           {/* Tips */}
           {spot.tips && spot.tips.length > 0 && (
             <section>

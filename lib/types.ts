@@ -29,6 +29,11 @@ export interface ReservationLink {
   note?: string
 }
 
+export interface StaffPhrase {
+  situation: string  // 中文說明，e.g. "幫小孩切小塊"
+  korean: string     // 給店員看的韓文，e.g. "작게 잘라주세요"
+}
+
 export interface ReviewSummary {
   pros: string[]   // 大家常提的優點
   cons: string[]   // 大家常提的缺點（排除極端/罕見意見）
@@ -69,6 +74,7 @@ export interface Spot {
   accepts_card?: boolean
   reservation_required?: boolean
   reservation_links?: ReservationLink[]
+  staff_phrases?: StaffPhrase[]
 
   // attraction / park
   ticket_price_krw?: number
