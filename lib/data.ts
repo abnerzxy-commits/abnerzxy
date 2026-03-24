@@ -32,10 +32,15 @@ export const spots: Spot[] = [
     reservation_required: true,
     reservation_links: [
       {
+        platform: 'Catch Table',
+        url: 'https://global.catchtable.co.kr/ct/restaurants/search?keyword=%EB%A6%AC%EB%B8%8C%EC%8A%A4+%EC%98%A4%EB%B8%8C+%EB%A0%88%EC%A0%84%EB%93%9C',
+        label: 'Catch Table Global 訂位',
+        note: '搜尋「리브스 오브 레전드」找到後直接訂位',
+      },
+      {
         platform: 'Naver',
         url: 'https://map.naver.com/v5/search/%EB%A6%AC%EB%B8%8C%EC%8A%A4+%EC%98%A4%EB%B8%8C+%EB%A0%88%EC%A0%84%EB%93%9C+%ED%95%B4%EC%9A%B4%EB%8C%80',
-        label: 'Naver Map 查看店家資訊',
-        note: '此餐廳建議電話或現場訂位，或在 Catch Table App 搜尋「리브스 오브 레전드」',
+        label: 'Naver Map 查看位置',
       },
     ],
     recommended_dishes: [
@@ -84,10 +89,15 @@ export const spots: Spot[] = [
     reservation_required: true,
     reservation_links: [
       {
+        platform: 'Catch Table',
+        url: 'https://global.catchtable.co.kr/ct/restaurants/search?keyword=%ED%95%B4%EC%A0%81%EC%8C%80%EB%A1%B1',
+        label: 'Catch Table Global 訂位',
+        note: '搜尋「해적쌀롱」找到後直接訂位',
+      },
+      {
         platform: 'Naver',
         url: 'https://map.naver.com/v5/search/%ED%95%B4%EC%A0%81%EC%8C%80%EB%A1%B1+%ED%95%B4%EC%9A%B4%EB%8C%80%EB%B3%B8%EC%A0%90',
-        label: 'Naver Map 查看店家資訊',
-        note: '此餐廳建議電話或現場訂位，或在 Catch Table App 搜尋「해적쌀롱」',
+        label: 'Naver Map 查看位置',
       },
     ],
     recommended_dishes: [
@@ -138,9 +148,14 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://app.catchtable.co.kr/ct/shop/Y2F0Y2hfeFFMalYxSWhPTm5PLythNWYwNTB2Zz09',
-        label: '前往 Catch Table 訂位',
+        url: 'https://global.catchtable.co.kr/ct/shop/Y2F0Y2hfeFFMalYxSWhPTm5PLythNWYwNTB2Zz09',
+        label: 'Catch Table Global 訂位',
         note: '米其林名店旺季可能需提前 2 週',
+      },
+      {
+        platform: 'Naver',
+        url: 'https://map.naver.com/v5/search/%ED%95%B4%EB%AA%A9+%ED%95%B4%EC%9A%B4%EB%8C%80',
+        label: 'Naver Map 查看位置',
       },
       {
         platform: 'Tabling',
@@ -200,6 +215,17 @@ export const spots: Spot[] = [
     accepts_card: true,
     reservation_required: false,
     reservation_links: [
+      {
+        platform: 'Catch Table',
+        url: 'https://global.catchtable.co.kr/ct/restaurants/search?keyword=%EB%A7%9B%EC%B0%AC%EB%93%A4%EC%99%95%EC%86%8C%EA%B8%88%EA%B5%AC%EC%9D%B4+%EC%84%9C%EB%A9%B4',
+        label: 'Catch Table Global 查看',
+        note: '無需預約，可查看等位狀況',
+      },
+      {
+        platform: 'Naver',
+        url: 'https://map.naver.com/v5/search/%EB%A7%9B%EC%B0%AC%EB%93%A4%EC%99%95%EC%86%8C%EA%B8%88%EA%B5%AC%EC%9D%B4+%EC%84%9C%EB%A9%B4%EC%A0%90',
+        label: 'Naver Map 查看位置',
+      },
       {
         platform: 'AutoReserve',
         url: 'https://autoreserve.com/en/restaurants/GbcEV3GwGU2vgvUx9SsS',
@@ -261,10 +287,15 @@ export const spots: Spot[] = [
     reservation_required: false,
     reservation_links: [
       {
+        platform: 'Catch Table',
+        url: 'https://global.catchtable.co.kr/ct/restaurants/search?keyword=%EA%B0%9C%EA%B8%88%EB%B0%80%EB%A9%B4',
+        label: 'Catch Table Global 查看',
+        note: '無需預約，直接前往',
+      },
+      {
         platform: 'Naver',
         url: 'https://map.naver.com/v5/search/%EA%B0%9C%EA%B8%88%EB%B0%80%EB%A9%B4',
         label: 'Naver Map 查看位置',
-        note: '無需訂位，直接前往，建議避開午餐尖峰',
       },
     ],
     recommended_dishes: [
@@ -315,10 +346,15 @@ export const spots: Spot[] = [
     reservation_required: false,
     reservation_links: [
       {
+        platform: 'Catch Table',
+        url: 'https://global.catchtable.co.kr/ct/restaurants/search?keyword=%EB%A7%9B%EC%B0%AC%EB%93%A4%EC%99%95%EC%86%8C%EA%B8%88%EA%B5%AC%EC%9D%B4+%ED%95%B4%EC%9A%B4%EB%8C%80',
+        label: 'Catch Table Global 查看',
+        note: '無需預約，可查看等位狀況',
+      },
+      {
         platform: 'Naver',
         url: 'https://map.naver.com/v5/search/%EB%A7%9B%EC%B0%AC%EB%93%A4%EC%99%95%EC%86%8C%EA%B8%88%EA%B5%AC%EC%9D%B4+%ED%95%B4%EC%9A%B4%EB%8C%80',
-        label: 'Naver Map 查看等位',
-        note: '現場取號等候，可線上確認等待人數',
+        label: 'Naver Map 查看位置',
       },
     ],
     recommended_dishes: [

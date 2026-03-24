@@ -113,7 +113,7 @@ export default function ReservationSection({ links, reservationRequired, name }:
       )}
       {links.some(l => l.platform === 'Catch Table') && (
         <div className="mt-3 text-xs text-gray-400 bg-gray-50 rounded-xl px-3 py-2">
-          💡 Catch Table 是韓國最大訂位平台，支援繁中介面。下載 App 搜尋「{name}」即可查看空位日曆。
+          💡 使用 <strong>Catch Table Global</strong>（外國人版）。建議同時下載 App，搜尋「{name}」可查看即時空位日曆，介面支援英文。
         </div>
       )}
     </section>
