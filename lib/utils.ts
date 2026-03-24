@@ -29,9 +29,9 @@ export function getTypeColor(type: string): string {
     restaurant: 'bg-orange-100 text-orange-700',
     cafe: 'bg-amber-100 text-amber-700',
     attraction: 'bg-blue-100 text-blue-700',
-    accommodation: 'bg-purple-100 text-purple-700',
+    park: 'bg-green-100 text-green-700',
     shopping: 'bg-pink-100 text-pink-700',
-    activity: 'bg-green-100 text-green-700',
+    activity: 'bg-teal-100 text-teal-700',
   }
   return map[type] ?? 'bg-gray-100 text-gray-700'
 }
@@ -40,8 +40,8 @@ export function getTypeIcon(type: string): string {
   const map: Record<string, string> = {
     restaurant: '🍽️',
     cafe: '☕',
-    attraction: '🏛️',
-    accommodation: '🏨',
+    attraction: '🎡',
+    park: '🌳',
     shopping: '🛍️',
     activity: '🏃',
   }

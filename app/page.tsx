@@ -1,52 +1,53 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { spots, suggestedItineraries } from '@/lib/data'
-import SpotCard from '@/components/SpotCard'
+import { spots, suggestedItineraries, typeLabels } from '@/lib/data'
+import { getTypeColor, getTypeIcon } from '@/lib/utils'
 
-const featuredSpotIds = ['6', '7', '1', '3', '9', '12']
-const featuredSpots = featuredSpotIds.map(id => spots.find(s => s.id === id)).filter(Boolean)
+const highlights = [
+  { id: 'a1', emoji: '🐠' },
+  { id: 'p1', emoji: '🎪' },
+  { id: 'r4', emoji: '🥩' },
+  { id: 'p2', emoji: '🌳' },
+  { id: 'a3', emoji: '🚃' },
+  { id: 's1', emoji: '🛍' },
+]
+const featuredSpots = highlights.map(h => ({
+  spot: spots.find(s => s.id === h.id),
+  emoji: h.emoji,
+})).filter(h => h.spot)
 
 const stats = [
-  { label: '熱門景點', value: `${spots.filter(s => s.type === 'attraction' || s.type === 'activity').length}+` },
-  { label: '餐廳咖啡廳', value: `${spots.filter(s => s.type === 'restaurant' || s.type === 'cafe').length}+` },
+  { label: '景點 / 公園', value: `${spots.filter(s => s.type === 'attraction' || s.type === 'park').length}` },
+  { label: '親子餐廳', value: `${spots.filter(s => s.type === 'restaurant').length}` },
   { label: '行程模板', value: `${suggestedItineraries.length}` },
-  { label: '點餐攻略', value: `${spots.filter(s => s.recommended_dishes?.length).length}+` },
+  { label: '均含訂位連結', value: `${spots.filter(s => s.reservation_links?.length).length}+` },
 ]
 
 export default function HomePage() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1548115184-bc6544d06a58?w=1400&q=60)', backgroundSize: 'cover', backgroundPosition: 'center' }}
-        />
-        <div className="relative max-w-6xl mx-auto px-4 py-24 md:py-32 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 text-sm mb-6">
-            <span>✨</span>
-            <span>聚合 YouTube・Instagram 網紅推薦</span>
+      <section className="relative bg-gradient-to-br from-sky-800 via-blue-700 to-indigo-800 text-white overflow-hidden">
+        <div className="absolute inset-0 opacity-15"
+          style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=1400&q=60)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        <div className="relative max-w-5xl mx-auto px-4 py-20 md:py-28 text-center">
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm mb-6">
+            👶 專為帶 2-6 歲小孩旅遊設計
           </div>
           <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-4">
-            韓國旅遊，<br />
-            <span className="text-yellow-300">一站搞定</span>
+            帶孩子去<span className="text-yellow-300">釜山</span><br />
+            什麼都幫你查好了
           </h1>
-          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-8 leading-relaxed">
-            景點・餐廳・點餐技巧・行程規劃<br />
-            從首爾到釜山，把網紅推薦整理給你
+          <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-8 leading-relaxed">
+            親子景點・公園遊樂場・無辣餐廳・訂位連結・網友優缺點<br />
+            還有你的專屬 5 天行程
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/spots"
-              className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold px-8 py-4 rounded-2xl text-lg transition-all hover:scale-105 shadow-lg"
-            >
-              🗺 探索景點餐廳
+            <Link href="/spots" className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold px-8 py-4 rounded-2xl text-lg transition-all hover:scale-105 shadow-lg">
+              🗺 探索所有景點餐廳
             </Link>
-            <Link
-              href="/itinerary"
-              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/30 text-white font-semibold px-8 py-4 rounded-2xl text-lg transition-all"
-            >
-              📅 看行程模板
+            <Link href="/itinerary" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-8 py-4 rounded-2xl text-lg transition-all">
+              📅 查看行程安排
             </Link>
           </div>
         </div>
@@ -54,7 +55,7 @@ export default function HomePage() {
 
       {/* Stats */}
       <section className="bg-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="max-w-5xl mx-auto px-4 py-8 grid grid-cols-2 md:grid-cols-4 gap-6">
           {stats.map(s => (
             <div key={s.label} className="text-center">
               <div className="text-3xl font-bold text-blue-600">{s.value}</div>
@@ -64,67 +65,49 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Spots */}
-      <section className="max-w-6xl mx-auto px-4 py-14">
+      {/* Kid-friendly highlights */}
+      <section className="max-w-5xl mx-auto px-4 py-14">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">精選景點與餐廳</h2>
-            <p className="text-gray-500 mt-1">YouTube 旅遊頻道最多人推薦</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">精選親子景點</h2>
+            <p className="text-gray-500 mt-1">全部以 2-6 歲小孩體驗為優先考量</p>
           </div>
-          <Link href="/spots" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-            查看全部 →
-          </Link>
+          <Link href="/spots" className="text-blue-600 hover:text-blue-700 font-medium text-sm">查看全部 →</Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredSpots.map(spot => spot && <SpotCard key={spot.id} spot={spot} />)}
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="bg-gradient-to-b from-gray-50 to-white py-14">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-12">
-            為什麼選韓遊通？
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { icon: '📺', title: 'YouTube 網紅認證', desc: '每個景點都標注哪位 YouTuber 推薦，搭配原始影片連結，讓你先看影片再決定去不去。' },
-              { icon: '🍽', title: '點餐攻略超詳細', desc: '不只告訴你去哪吃，還告訴你「要點什麼菜、怎麼說韓文、要不要排隊」，完全解決語言障礙。' },
-              { icon: '📅', title: '行程安排超實際', desc: '自動計算交通時間、提醒你哪天公休、每個景點建議停留多久，讓你不過度安排、行程不爆炸。' },
-            ].map(f => (
-              <div key={f.title} className="text-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100">
-                <div className="text-5xl mb-4">{f.icon}</div>
-                <h3 className="font-bold text-gray-900 text-lg mb-2">{f.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Itinerary Preview */}
-      <section className="max-w-6xl mx-auto px-4 py-14">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">行程模板</h2>
-            <p className="text-gray-500 mt-1">直接套用，出發前5分鐘搞定行程</p>
-          </div>
-          <Link href="/itinerary" className="text-blue-600 hover:text-blue-700 font-medium text-sm">
-            查看全部 →
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {suggestedItineraries.map(itin => (
-            <Link key={itin.id} href={`/itinerary/${itin.id}`} className="group">
-              <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex">
-                <div className="relative w-36 shrink-0">
-                  <Image src={itin.image_url} alt={itin.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="144px" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {featuredSpots.map(({ spot, emoji }) => spot && (
+            <Link key={spot.id} href={`/spots/${spot.slug}`} className="group">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                <div className="relative h-44">
+                  <Image src={spot.image_url} alt={spot.name_zh} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="380px" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute top-3 left-3">
+                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${getTypeColor(spot.type)}`}>
+                      {getTypeIcon(spot.type)} {typeLabels[spot.type]}
+                    </span>
+                  </div>
+                  <div className="absolute bottom-3 left-4 right-4">
+                    <p className="text-white font-bold text-base leading-tight">{spot.name_zh}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-white/80 text-xs">{spot.district}</span>
+                      <div className="flex">
+                        {Array.from({ length: spot.kid_friendly_score }).map((_, i) => (
+                          <span key={i} className="text-xs">👶</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  {spot.ticket_price_free && (
+                    <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">免費</div>
+                  )}
                 </div>
-                <div className="p-5 flex-1">
-                  <span className="text-xs bg-blue-50 text-blue-600 font-medium px-2 py-1 rounded-full">{itin.days} 天行程</span>
-                  <h3 className="font-bold text-gray-900 mt-2 group-hover:text-blue-600 transition-colors">{itin.title}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{itin.description}</p>
-                  <p className="text-xs text-gray-400 mt-3">包含 {itin.spotIds.length} 個景點・餐廳</p>
+                <div className="px-4 py-3">
+                  <p className="text-sm text-gray-500 line-clamp-2">{spot.description}</p>
+                  {spot.review_summary?.pros[0] && (
+                    <p className="text-xs text-green-600 mt-2 flex gap-1">
+                      <span>✓</span><span className="line-clamp-1">{spot.review_summary.pros[0]}</span>
+                    </p>
+                  )}
                 </div>
               </div>
             </Link>
@@ -132,24 +115,69 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* City Quick Links */}
-      <section className="bg-blue-900 text-white py-14">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-3">選擇你的目的地</h2>
-          <p className="text-blue-200 mb-8">首爾・釜山・濟州，韓國熱門城市全覆蓋</p>
-          <div className="flex flex-wrap justify-center gap-4">
+      {/* Feature blocks */}
+      <section className="bg-gradient-to-b from-gray-50 to-white py-14">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-10">這個網站幫你整理了什麼？</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
-              { city: '首爾', emoji: '🏙️', desc: '弘大・明洞・景福宮' },
-              { city: '釜山', emoji: '🌊', desc: '海雲台・甘川文化村' },
-              { city: '濟州', emoji: '🍊', desc: '漢拏山・城山日出峰' },
-            ].map(c => (
-              <Link key={c.city} href={`/spots?city=${c.city}`} className="bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl px-8 py-5 text-center transition-all hover:scale-105 min-w-[160px]">
-                <div className="text-4xl mb-2">{c.emoji}</div>
-                <div className="font-bold text-lg">{c.city}</div>
-                <div className="text-xs text-blue-200 mt-1">{c.desc}</div>
-              </Link>
+              { icon: '🌶', title: '辣度標示', desc: '每個餐廳都標注辣度，無辣和可調整辣度的一目了然，小孩可以吃的安心' },
+              { icon: '👶', title: '親子評分', desc: '每個景點都有 1-5 星親子友善評分，並說明 2-6 歲小孩的具體體驗' },
+              { icon: '📝', title: '網友優缺點', desc: '整理真實旅遊者最常提到的優點和需要注意的缺點，非極端偏頗意見' },
+              { icon: '🪑', title: '直接訂位', desc: '餐廳附上 Catch Table / KKday / 官網訂位連結，選好日期直接跳轉' },
+            ].map(f => (
+              <div key={f.title} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 text-center">
+                <div className="text-4xl mb-3">{f.icon}</div>
+                <h3 className="font-bold text-gray-900 mb-2">{f.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+              </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Itinerary preview */}
+      <section className="max-w-5xl mx-auto px-4 py-14">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">行程模板</h2>
+            <p className="text-gray-500 mt-1">個人行程 + 親子公園巡禮 + 一日精華</p>
+          </div>
+          <Link href="/itinerary" className="text-blue-600 hover:text-blue-700 font-medium text-sm">查看全部 →</Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {suggestedItineraries.map(itin => (
+            <Link key={itin.id} href={`/itinerary/${itin.id}`} className="group">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                <div className="relative h-40">
+                  <Image src={itin.image_url} alt={itin.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="380px" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-3 left-4 right-4">
+                    <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-full">{itin.days} 天</span>
+                    <p className="text-white font-bold mt-1">{itin.title}</p>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <p className="text-sm text-gray-500">{itin.description}</p>
+                  <p className="text-xs text-blue-600 mt-2 font-medium">查看完整行程 →</p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Free parks CTA */}
+      <section className="bg-emerald-700 text-white py-12">
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <div className="text-4xl mb-3">🌳</div>
+          <h2 className="text-2xl font-bold mb-2">釜山有超多免費親子公園！</h2>
+          <p className="text-emerald-100 mb-6 max-w-md mx-auto">
+            免費水樂園、遊樂設施、推車友善步道，<br />不用花大錢就能讓小孩玩一整天
+          </p>
+          <Link href="/spots?type=park" className="inline-block bg-white text-emerald-700 font-bold px-6 py-3 rounded-xl hover:bg-emerald-50 transition-colors">
+            查看所有親子公園 →
+          </Link>
         </div>
       </section>
     </div>

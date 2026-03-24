@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { spots, typeLabels } from '@/lib/data'
+import { spots, typeLabels, spiceLevelLabels } from '@/lib/data'
 import { formatKRW, formatKRWtoTWD, getTypeColor, getTypeIcon, minutesToHoursText } from '@/lib/utils'
 import { Dish } from '@/lib/types'
 import GoogleMap from '@/components/GoogleMap'
+import ReservationSection from '@/components/ReservationSection'
 
 export function generateStaticParams() {
   return spots.map(s => ({ slug: s.slug }))
@@ -15,9 +16,27 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const spot = spots.find(s => s.slug === slug)
   if (!spot) return {}
   return {
-    title: `${spot.name_zh}（${spot.name_ko}）| 韓遊通`,
+    title: `${spot.name_zh}（${spot.name_ko}）| 釜山親子旅遊`,
     description: spot.description,
   }
+}
+
+function KidScoreBadge({ score, notes }: { score: number; notes?: string }) {
+  const labels = ['', '不太適合', '需留意', '尚可', '適合', '非常適合！']
+  const colors = ['', 'bg-red-100 text-red-700', 'bg-orange-100 text-orange-700', 'bg-yellow-100 text-yellow-700', 'bg-green-100 text-green-700', 'bg-emerald-100 text-emerald-700']
+  return (
+    <div className={`rounded-2xl px-4 py-3 ${colors[score]}`}>
+      <div className="flex items-center gap-2 mb-1">
+        <span className="font-bold text-sm">👶 2-6歲親子友善度：{labels[score]}</span>
+        <div className="flex">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span key={i} className={`text-sm ${i < score ? '' : 'opacity-20'}`}>⭐</span>
+          ))}
+        </div>
+      </div>
+      {notes && <p className="text-xs leading-relaxed">{notes}</p>}
+    </div>
+  )
 }
 
 function DishCard({ dish }: { dish: Dish }) {
@@ -31,9 +50,7 @@ function DishCard({ dish }: { dish: Dish }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-gray-900">{dish.name_zh}</span>
-          {dish.must_order && (
-            <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">必點</span>
-          )}
+          {dish.must_order && <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">必點</span>}
         </div>
         <p className="text-xs text-gray-400 mt-0.5">{dish.name_ko}</p>
         <p className="text-sm text-gray-600 mt-1 leading-relaxed">{dish.description}</p>
@@ -52,20 +69,19 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
   if (!spot) notFound()
 
   const relatedSpots = spots
-    .filter(s => s.id !== spot.id && (s.district === spot.district || s.city === spot.city))
+    .filter(s => s.id !== spot.id && (s.district === spot.district || s.type === spot.type))
     .slice(0, 3)
 
   const priceDisplay = spot.ticket_price_free
-    ? '免費入場'
+    ? '免費'
     : spot.ticket_price_krw
-    ? `${formatKRW(spot.ticket_price_krw)} / ${formatKRWtoTWD(spot.ticket_price_krw)}`
+    ? `${formatKRW(spot.ticket_price_krw)} / 人（${formatKRWtoTWD(spot.ticket_price_krw)}）`
     : spot.avg_price_krw
     ? `約 ${formatKRW(spot.avg_price_krw)} / 人（${formatKRWtoTWD(spot.avg_price_krw)}）`
     : null
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* Back */}
       <Link href="/spots" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 mb-6 transition-colors">
         ← 返回景點列表
       </Link>
@@ -96,17 +112,73 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main content */}
         <div className="lg:col-span-2 space-y-8">
+
           {/* Description */}
-          <section>
-            <p className="text-gray-700 leading-relaxed text-lg">{spot.description}</p>
-          </section>
+          <p className="text-gray-700 leading-relaxed text-lg">{spot.description}</p>
+
+          {/* Kid-friendly badge */}
+          <KidScoreBadge score={spot.kid_friendly_score} notes={spot.kid_friendly_notes} />
+
+          {/* Spice level */}
+          {spot.spice_level && (
+            <div className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium ${
+              spot.spice_level === 'none' ? 'bg-green-50 border border-green-100 text-green-800' :
+              spot.spice_level === 'mild' ? 'bg-yellow-50 border border-yellow-100 text-yellow-800' :
+              'bg-red-50 border border-red-100 text-red-800'
+            }`}>
+              <span className="text-xl">🌶</span>
+              <span>辣度：{spiceLevelLabels[spot.spice_level]}</span>
+            </div>
+          )}
+
+          {/* Pros & Cons */}
+          {spot.review_summary && (
+            <section>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">📝 網友評價總結</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-green-50 border border-green-100 rounded-2xl p-4">
+                  <h3 className="font-bold text-green-800 mb-3 flex items-center gap-2">
+                    <span className="text-lg">👍</span> 大家說好
+                  </h3>
+                  <ul className="space-y-2">
+                    {spot.review_summary.pros.map((pro, i) => (
+                      <li key={i} className="flex gap-2 text-sm text-green-900">
+                        <span className="text-green-500 shrink-0 mt-0.5">✓</span>
+                        <span>{pro}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4">
+                  <h3 className="font-bold text-orange-800 mb-3 flex items-center gap-2">
+                    <span className="text-lg">⚠️</span> 需要注意
+                  </h3>
+                  <ul className="space-y-2">
+                    {spot.review_summary.cons.map((con, i) => (
+                      <li key={i} className="flex gap-2 text-sm text-orange-900">
+                        <span className="text-orange-500 shrink-0 mt-0.5">▸</span>
+                        <span>{con}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Reservation (only if has links) */}
+          {spot.reservation_links && spot.reservation_links.length > 0 && (
+            <ReservationSection
+              links={spot.reservation_links}
+              reservationRequired={spot.reservation_required}
+              name={spot.name_ko}
+            />
+          )}
 
           {/* Recommended Dishes */}
           {spot.recommended_dishes && spot.recommended_dishes.length > 0 && (
             <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                🍽 推薦必點菜單
-              </h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">🍽 推薦必點菜單</h2>
               <div className="space-y-3">
                 {spot.recommended_dishes.map((dish, i) => <DishCard key={i} dish={dish} />)}
               </div>
@@ -116,9 +188,7 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
           {/* Ordering Tips */}
           {spot.ordering_tips && spot.ordering_tips.length > 0 && (
             <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                💬 點餐攻略
-              </h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">💬 點餐攻略</h2>
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 space-y-3">
                 {spot.ordering_tips.map((tip, i) => (
                   <div key={i} className="flex gap-3">
@@ -133,43 +203,13 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
           {/* Tips */}
           {spot.tips && spot.tips.length > 0 && (
             <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                💡 旅遊小技巧
-              </h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">💡 旅遊小技巧</h2>
               <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 space-y-3">
                 {spot.tips.map((tip, i) => (
                   <div key={i} className="flex gap-3">
                     <span className="text-blue-500 shrink-0 mt-0.5">▸</span>
                     <p className="text-gray-700 text-sm leading-relaxed">{tip}</p>
                   </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* YouTube Sources */}
-          {spot.youtube_sources && spot.youtube_sources.length > 0 && (
-            <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                📺 網紅推薦影片
-              </h2>
-              <div className="space-y-3">
-                {spot.youtube_sources.map((src, i) => (
-                  <a key={i} href={src.url} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-4 bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-md transition-all hover:-translate-y-0.5 group">
-                    <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center shrink-0 group-hover:bg-red-500 transition-colors">
-                      <svg className="w-6 h-6 text-red-500 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                      </svg>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 text-sm line-clamp-2">{src.title}</p>
-                      <p className="text-xs text-gray-400 mt-1">by {src.creator}</p>
-                    </div>
-                    <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
                 ))}
               </div>
             </section>
@@ -192,7 +232,7 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
               </div>
             )}
 
-            {spot.time_needed_minutes && (
+            {spot.time_needed_minutes ? (
               <div className="flex gap-3">
                 <span className="text-xl shrink-0">⏱</span>
                 <div>
@@ -200,7 +240,7 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
                   <p className="text-sm font-semibold">{minutesToHoursText(spot.time_needed_minutes)}</p>
                 </div>
               </div>
-            )}
+            ) : null}
 
             {spot.best_time_to_visit && (
               <div className="flex gap-3">
@@ -208,6 +248,16 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
                 <div>
                   <p className="text-xs text-gray-400">最佳時段</p>
                   <p className="text-sm font-semibold">{spot.best_time_to_visit}</p>
+                </div>
+              </div>
+            )}
+
+            {spot.min_age !== undefined && (
+              <div className="flex gap-3">
+                <span className="text-xl shrink-0">👶</span>
+                <div>
+                  <p className="text-xs text-gray-400">建議最低年齡</p>
+                  <p className="text-sm font-semibold">{spot.min_age === 0 ? '所有年齡適合' : `${spot.min_age} 歲以上`}</p>
                 </div>
               </div>
             )}
@@ -221,31 +271,14 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
               </div>
             </div>
 
-            {spot.district && (
-              <div className="flex gap-3">
-                <span className="text-xl shrink-0">🗺</span>
-                <div>
-                  <p className="text-xs text-gray-400">區域</p>
-                  <p className="text-sm font-semibold">{spot.district}・{spot.city}</p>
-                </div>
-              </div>
-            )}
-
             {/* Restaurant badges */}
             {spot.type === 'restaurant' && (
               <div className="pt-3 border-t border-gray-100 flex flex-wrap gap-2">
                 {spot.has_english_menu && <span className="text-xs bg-green-50 text-green-700 border border-green-100 px-2 py-1 rounded-full">英文菜單</span>}
                 {spot.accepts_card && <span className="text-xs bg-blue-50 text-blue-700 border border-blue-100 px-2 py-1 rounded-full">可刷卡</span>}
-                {spot.reservation_required && <span className="text-xs bg-red-50 text-red-700 border border-red-100 px-2 py-1 rounded-full">需訂位</span>}
                 {spot.reservation_required === false && <span className="text-xs bg-gray-50 text-gray-600 border border-gray-100 px-2 py-1 rounded-full">不需訂位</span>}
+                {spot.reservation_required && <span className="text-xs bg-red-50 text-red-700 border border-red-100 px-2 py-1 rounded-full">建議訂位</span>}
               </div>
-            )}
-
-            {spot.booking_url && (
-              <a href={spot.booking_url} target="_blank" rel="noopener noreferrer"
-                className="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition-colors">
-                前往官網訂票
-              </a>
             )}
           </div>
 
@@ -275,21 +308,15 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
           {/* Google Map */}
           <div>
             <h3 className="font-bold text-gray-900 mb-3">📍 地圖位置</h3>
-            <GoogleMap
-              lat={spot.lat}
-              lng={spot.lng}
-              name={spot.name_ko}
-              address={spot.address_ko}
-            />
+            <GoogleMap lat={spot.lat} lng={spot.lng} name={spot.name_ko} address={spot.address_ko} />
           </div>
 
           {/* Tags */}
           {spot.tags && spot.tags.length > 0 && (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <h3 className="font-bold text-gray-900 mb-3">標籤</h3>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
               <div className="flex flex-wrap gap-2">
                 {spot.tags.map(tag => (
-                  <span key={tag} className="text-sm bg-gray-50 text-gray-600 border border-gray-100 px-3 py-1 rounded-full">
+                  <span key={tag} className="text-xs bg-gray-50 text-gray-600 border border-gray-100 px-2 py-1 rounded-full">
                     {tag}
                   </span>
                 ))}
@@ -302,7 +329,7 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
       {/* Related Spots */}
       {relatedSpots.length > 0 && (
         <section className="mt-14">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">附近景點</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-6">附近 / 同類型推薦</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {relatedSpots.map(s => (
               <Link key={s.id} href={`/spots/${s.slug}`} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-all hover:-translate-y-0.5">
@@ -311,7 +338,7 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
                 </div>
                 <div className="p-3">
                   <p className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors">{s.name_zh}</p>
-                  <p className="text-xs text-gray-400">{s.district}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{s.district}</p>
                 </div>
               </Link>
             ))}
