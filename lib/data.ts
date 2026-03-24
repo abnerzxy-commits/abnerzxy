@@ -33,9 +33,9 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/ct/restaurants/search?keyword=%EB%A6%AC%EB%B8%8C%EC%8A%A4+%EC%98%A4%EB%B8%8C+%EB%A0%88%EC%A0%84%EB%93%9C',
+        url: 'https://global.catchtable.co.kr/',
         label: 'Catch Table Global 訂位',
-        note: '搜尋「리브스 오브 레전드」找到後直接訂位',
+        note: 'App 開啟後搜尋「리브스 오브 레전드」',
       },
       {
         platform: 'Naver',
@@ -90,9 +90,9 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/ct/restaurants/search?keyword=%ED%95%B4%EC%A0%81%EC%8C%80%EB%A1%B1',
+        url: 'https://global.catchtable.co.kr/',
         label: 'Catch Table Global 訂位',
-        note: '搜尋「해적쌀롱」找到後直接訂位',
+        note: 'App 開啟後搜尋「해적쌀롱」',
       },
       {
         platform: 'Naver',
@@ -149,8 +149,8 @@ export const spots: Spot[] = [
       {
         platform: 'Catch Table',
         url: 'https://global.catchtable.co.kr/ct/shop/Y2F0Y2hfeFFMalYxSWhPTm5PLythNWYwNTB2Zz09',
-        label: 'Catch Table Global 訂位',
-        note: '米其林名店旺季可能需提前 2 週',
+        label: 'Catch Table Global 訂位（直達頁面）',
+        note: '直接開啟餐廳訂位頁，旺季建議提前 2 週',
       },
       {
         platform: 'Naver',
@@ -217,9 +217,9 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/ct/restaurants/search?keyword=%EB%A7%9B%EC%B0%AC%EB%93%A4%EC%99%95%EC%86%8C%EA%B8%88%EA%B5%AC%EC%9D%B4+%EC%84%9C%EB%A9%B4',
+        url: 'https://global.catchtable.co.kr/',
         label: 'Catch Table Global 查看',
-        note: '無需預約，可查看等位狀況',
+        note: 'App 開啟後搜尋「맛찬들왕소금구이 서면」',
       },
       {
         platform: 'Naver',
@@ -288,9 +288,9 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/ct/restaurants/search?keyword=%EA%B0%9C%EA%B8%88%EB%B0%80%EB%A9%B4',
+        url: 'https://global.catchtable.co.kr/',
         label: 'Catch Table Global 查看',
-        note: '無需預約，直接前往',
+        note: 'App 開啟後搜尋「개금밀면」，無需預約直接前往',
       },
       {
         platform: 'Naver',
@@ -347,9 +347,9 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/ct/restaurants/search?keyword=%EB%A7%9B%EC%B0%AC%EB%93%A4%EC%99%95%EC%86%8C%EA%B8%88%EA%B5%AC%EC%9D%B4+%ED%95%B4%EC%9A%B4%EB%8C%80',
+        url: 'https://global.catchtable.co.kr/',
         label: 'Catch Table Global 查看',
-        note: '無需預約，可查看等位狀況',
+        note: 'App 開啟後搜尋「맛찬들왕소금구이 해운대」',
       },
       {
         platform: 'Naver',
