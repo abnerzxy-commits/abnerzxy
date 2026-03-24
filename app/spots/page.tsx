@@ -1,6 +1,5 @@
 'use client'
-import { useState, useMemo } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useMemo, useCallback } from 'react'
 import { Suspense } from 'react'
 import { spots, filterTypes } from '@/lib/data'
 import SpotCard from '@/components/SpotCard'
@@ -11,14 +10,46 @@ const kidScoreOptions = [
   { value: 5, label: '👶👶 超級親子（5星）' },
 ]
 
+function haversine(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
 function SpotsContent() {
-  const searchParams = useSearchParams()
   const [query, setQuery] = useState('')
   const [typeFilter, setTypeFilter] = useState('all')
   const [kidFilter, setKidFilter] = useState(0)
+  const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null)
+  const [sortByDist, setSortByDist] = useState(false)
+  const [gpsLoading, setGpsLoading] = useState(false)
+  const [gpsError, setGpsError] = useState('')
+
+  const requestGPS = useCallback(() => {
+    if (!navigator.geolocation) {
+      setGpsError('此裝置不支援 GPS 定位')
+      return
+    }
+    setGpsLoading(true)
+    setGpsError('')
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        setUserPos({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+        setSortByDist(true)
+        setGpsLoading(false)
+      },
+      () => {
+        setGpsError('無法取得位置，請確認已開啟定位權限')
+        setGpsLoading(false)
+      },
+      { timeout: 10000 }
+    )
+  }, [])
 
   const filtered = useMemo(() => {
-    return spots.filter(s => {
+    const list = spots.filter(s => {
       const matchType = typeFilter === 'all' || s.type === typeFilter
       const matchKid = kidFilter === 0 || s.kid_friendly_score >= kidFilter
       const matchQuery = !query || [s.name_zh, s.name_ko, s.description, s.district, ...(s.tags ?? [])].some(
@@ -26,7 +57,14 @@ function SpotsContent() {
       )
       return matchType && matchKid && matchQuery
     })
-  }, [query, typeFilter, kidFilter])
+
+    if (sortByDist && userPos) {
+      return list
+        .map(s => ({ spot: s, dist: haversine(userPos.lat, userPos.lng, s.lat, s.lng) }))
+        .sort((a, b) => a.dist - b.dist)
+    }
+    return list.map(s => ({ spot: s, dist: undefined }))
+  }, [query, typeFilter, kidFilter, sortByDist, userPos])
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -50,8 +88,7 @@ function SpotsContent() {
       </div>
 
       {/* Filters row */}
-      <div className="flex flex-wrap gap-3 mb-8">
-        {/* Type */}
+      <div className="flex flex-wrap gap-3 mb-5">
         {filterTypes.map(t => (
           <button
             key={t.id}
@@ -66,7 +103,6 @@ function SpotsContent() {
           </button>
         ))}
         <div className="w-full h-px bg-gray-100" />
-        {/* Kid filter */}
         {kidScoreOptions.map(opt => (
           <button
             key={opt.value}
@@ -80,6 +116,42 @@ function SpotsContent() {
             {opt.label}
           </button>
         ))}
+      </div>
+
+      {/* GPS distance sort */}
+      <div className="mb-6">
+        {!userPos ? (
+          <button
+            onClick={requestGPS}
+            disabled={gpsLoading}
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white border border-gray-200 hover:border-blue-400 hover:text-blue-600 transition-all disabled:opacity-50"
+          >
+            {gpsLoading
+              ? <><span className="animate-spin">⏳</span> 取得位置中...</>
+              : <><span>📍</span> 按距離排序（GPS）</>
+            }
+          </button>
+        ) : (
+          <div className="flex items-center gap-3 flex-wrap">
+            <button
+              onClick={() => setSortByDist(v => !v)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                sortByDist
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-white text-gray-600 border border-gray-200'
+              }`}
+            >
+              📍 {sortByDist ? '按距離排序中' : '按距離排序'}
+            </button>
+            <button
+              onClick={() => { setUserPos(null); setSortByDist(false) }}
+              className="text-xs text-gray-400 hover:text-gray-600"
+            >
+              取消定位
+            </button>
+          </div>
+        )}
+        {gpsError && <p className="text-xs text-red-500 mt-2">{gpsError}</p>}
       </div>
 
       {/* Legend */}
@@ -98,7 +170,9 @@ function SpotsContent() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map(spot => <SpotCard key={spot.id} spot={spot} />)}
+          {filtered.map(({ spot, dist }) => (
+            <SpotCard key={spot.id} spot={spot} distance={dist} />
+          ))}
         </div>
       )}
     </div>

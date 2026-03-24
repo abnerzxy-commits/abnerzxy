@@ -37,11 +37,6 @@ export const spots: Spot[] = [
         label: 'Catch Table Global 訂位',
         note: 'App 開啟後搜尋「리브스 오브 레전드」',
       },
-      {
-        platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/%EB%A6%AC%EB%B8%8C%EC%8A%A4+%EC%98%A4%EB%B8%8C+%EB%A0%88%EC%A0%84%EB%93%9C+%ED%95%B4%EC%9A%B4%EB%8C%80',
-        label: 'Naver Map 查看位置',
-      },
     ],
     staff_phrases: [
       { situation: '我們幾個人（例：4人）', korean: '네 명이요' },
@@ -104,11 +99,6 @@ export const spots: Spot[] = [
         label: 'Catch Table Global 訂位',
         note: 'App 開啟後搜尋「해적쌀롱」',
       },
-      {
-        platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/%ED%95%B4%EC%A0%81%EC%8C%80%EB%A1%B1+%ED%95%B4%EC%9A%B4%EB%8C%80%EB%B3%B8%EC%A0%90',
-        label: 'Naver Map 查看位置',
-      },
     ],
     staff_phrases: [
       { situation: '我們幾個人（例：4人）', korean: '네 명이요' },
@@ -168,14 +158,9 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://www.catchtable.net/shop/Y2F0Y2hfeFFMalYxSWhPTm5PLythNWYwNTB2Zz09',
-        label: 'Catch Table Global 訂位（直達頁面）',
-        note: '直接開啟餐廳訂位頁，旺季建議提前 2 週',
-      },
-      {
-        platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/%ED%95%B4%EB%AA%A9+%ED%95%B4%EC%9A%B4%EB%8C%80',
-        label: 'Naver Map 查看位置',
+        url: 'https://www.catchtable.net/',
+        label: 'Catch Table Global 訂位',
+        note: 'App 開啟後搜尋「해목」，旺季建議提前 2 週',
       },
       {
         platform: 'Tabling',
@@ -249,11 +234,6 @@ export const spots: Spot[] = [
         url: 'https://www.catchtable.net/',
         label: 'Catch Table Global 查看',
         note: 'App 開啟後搜尋「맛찬들왕소금구이 서면」',
-      },
-      {
-        platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/%EB%A7%9B%EC%B0%AC%EB%93%A4%EC%99%95%EC%86%8C%EA%B8%88%EA%B5%AC%EC%9D%B4+%EC%84%9C%EB%A9%B4%EC%A0%90',
-        label: 'Naver Map 查看位置',
       },
       {
         platform: 'AutoReserve',
@@ -331,11 +311,6 @@ export const spots: Spot[] = [
         label: 'Catch Table Global 查看',
         note: 'App 開啟後搜尋「개금밀면」，無需預約直接前往',
       },
-      {
-        platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/%EA%B0%9C%EA%B8%88%EB%B0%80%EB%A9%B4',
-        label: 'Naver Map 查看位置',
-      },
     ],
     staff_phrases: [
       { situation: '我們幾個人（例：4人）', korean: '네 명이요' },
@@ -398,11 +373,6 @@ export const spots: Spot[] = [
         url: 'https://www.catchtable.net/',
         label: 'Catch Table Global 查看',
         note: 'App 開啟後搜尋「맛찬들왕소금구이 해운대」',
-      },
-      {
-        platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/%EB%A7%9B%EC%B0%AC%EB%93%A4%EC%99%95%EC%86%8C%EA%B8%88%EA%B5%AC%EC%9D%B4+%ED%95%B4%EC%9A%B4%EB%8C%80',
-        label: 'Naver Map 查看位置',
       },
     ],
     staff_phrases: [
@@ -928,11 +898,6 @@ export const spots: Spot[] = [
         note: 'App 開啟後搜尋「밀양순대돼지국밥 해운대」',
       },
       {
-        platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/%EB%B0%80%EC%96%91%EC%88%9C%EB%8C%80%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5+%EB%B6%80%EC%82%B0%EB%B3%B8%EC%A0%90',
-        label: 'Naver Map 查看位置',
-      },
-      {
         platform: 'AutoReserve',
         url: 'https://autoreserve.com/ko/restaurants/UHu5bzwZwBP5vTSyktbo',
         label: '線上等位（AutoReserve）',
@@ -1012,11 +977,6 @@ export const spots: Spot[] = [
         url: 'https://www.catchtable.net/',
         label: 'Catch Table Global 查看',
         note: 'App 開啟後搜尋「쌍둥이돼지국밥」',
-      },
-      {
-        platform: 'Naver',
-        url: 'https://map.naver.com/v5/search/%EC%8C%8D%EB%91%A5%EC%9D%B4%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5+%EB%B3%B8%EC%A0%90',
-        label: 'Naver Map 查看位置',
       },
     ],
     staff_phrases: [

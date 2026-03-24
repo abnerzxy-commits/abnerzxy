@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { spots, typeLabels, spiceLevelLabels } from '@/lib/data'
 import { formatKRW, formatKRWtoTWD, getTypeColor, getTypeIcon, minutesToHoursText } from '@/lib/utils'
 import { Dish } from '@/lib/types'
-import GoogleMap from '@/components/GoogleMap'
+import NaverMap from '@/components/NaverMap'
 import ReservationSection from '@/components/ReservationSection'
 
 export function generateStaticParams() {
@@ -327,10 +327,10 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
             </div>
           )}
 
-          {/* Google Map */}
+          {/* Naver Map */}
           <div>
-            <h3 className="font-bold text-gray-900 mb-3">📍 地圖位置</h3>
-            <GoogleMap lat={spot.lat} lng={spot.lng} name={spot.name_ko} address={spot.address_ko} />
+            <h3 className="font-bold text-gray-900 mb-3">🗺 地圖 / 導航</h3>
+            <NaverMap lat={spot.lat} lng={spot.lng} name={spot.name_ko} address={spot.address_ko} />
           </div>
 
           {/* Tags */}

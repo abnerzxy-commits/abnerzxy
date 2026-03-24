@@ -14,7 +14,7 @@ function KidScore({ score }: { score: number }) {
   )
 }
 
-export default function SpotCard({ spot }: { spot: Spot }) {
+export default function SpotCard({ spot, distance }: { spot: Spot; distance?: number }) {
   const priceText = spot.ticket_price_free
     ? '免費'
     : spot.ticket_price_krw
@@ -92,6 +92,14 @@ export default function SpotCard({ spot }: { spot: Spot }) {
               )}
             </div>
           </div>
+
+          {/* Distance badge */}
+          {distance !== undefined && (
+            <p className="text-xs text-blue-600 font-medium mt-1.5 flex items-center gap-1">
+              <span>📍</span>
+              <span>{distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toFixed(1)} km`} 距離你</span>
+            </p>
+          )}
 
           {/* Quick pros preview */}
           {spot.review_summary?.pros?.[0] && (
