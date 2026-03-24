@@ -33,7 +33,7 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/',
+        url: 'https://www.catchtable.net/',
         label: 'Catch Table Global 訂位',
         note: 'App 開啟後搜尋「리브스 오브 레전드」',
       },
@@ -90,7 +90,7 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/',
+        url: 'https://www.catchtable.net/',
         label: 'Catch Table Global 訂位',
         note: 'App 開啟後搜尋「해적쌀롱」',
       },
@@ -148,7 +148,7 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/ct/shop/Y2F0Y2hfeFFMalYxSWhPTm5PLythNWYwNTB2Zz09',
+        url: 'https://www.catchtable.net/shop/Y2F0Y2hfeFFMalYxSWhPTm5PLythNWYwNTB2Zz09',
         label: 'Catch Table Global 訂位（直達頁面）',
         note: '直接開啟餐廳訂位頁，旺季建議提前 2 週',
       },
@@ -217,7 +217,7 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/',
+        url: 'https://www.catchtable.net/',
         label: 'Catch Table Global 查看',
         note: 'App 開啟後搜尋「맛찬들왕소금구이 서면」',
       },
@@ -288,7 +288,7 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/',
+        url: 'https://www.catchtable.net/',
         label: 'Catch Table Global 查看',
         note: 'App 開啟後搜尋「개금밀면」，無需預約直接前往',
       },
@@ -347,7 +347,7 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Catch Table',
-        url: 'https://global.catchtable.co.kr/',
+        url: 'https://www.catchtable.net/',
         label: 'Catch Table Global 查看',
         note: 'App 開啟後搜尋「맛찬들왕소금구이 해운대」',
       },

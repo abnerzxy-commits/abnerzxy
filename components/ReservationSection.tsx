@@ -113,7 +113,7 @@ export default function ReservationSection({ links, reservationRequired, name }:
       )}
       {links.some(l => l.platform === 'Catch Table') && (
         <div className="mt-3 text-xs text-gray-400 bg-gray-50 rounded-xl px-3 py-2">
-          💡 使用 <strong>Catch Table Global</strong>（外國人版）。建議同時下載 App，搜尋「{name}」可查看即時空位日曆，介面支援英文。
+          💡 使用 <strong>Catch Table Global App</strong>（App Store 搜尋「CATCH TABLE」，選 GLOBAL 版本）。點擊按鈕會直接開啟 App，在 App 內搜尋餐廳名稱即可訂位。
         </div>
       )}
     </section>
