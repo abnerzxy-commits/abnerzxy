@@ -1,4 +1,4 @@
-export type SpotType = 'restaurant' | 'cafe' | 'attraction' | 'park' | 'shopping' | 'activity'
+export type SpotType = 'restaurant' | 'cafe' | 'attraction' | 'park' | 'shopping' | 'activity' | 'dessert'
 export type PriceRange = 'free' | 'budget' | 'moderate' | 'expensive' | 'luxury'
 export type SpiceLevel = 'none' | 'mild' | 'moderate' | 'spicy'
 

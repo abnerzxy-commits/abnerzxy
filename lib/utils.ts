@@ -32,6 +32,7 @@ export function getTypeColor(type: string): string {
     park: 'bg-green-100 text-green-700',
     shopping: 'bg-pink-100 text-pink-700',
     activity: 'bg-teal-100 text-teal-700',
+    dessert: 'bg-purple-100 text-purple-700',
   }
   return map[type] ?? 'bg-gray-100 text-gray-700'
 }
@@ -44,6 +45,7 @@ export function getTypeIcon(type: string): string {
     park: '🌳',
     shopping: '🛍️',
     activity: '🏃',
+    dessert: '🍰',
   }
   return map[type] ?? '📍'
 }
