@@ -16,6 +16,11 @@ const featuredSpots = highlights.map(h => ({
   emoji: h.emoji,
 })).filter(h => h.spot)
 
+const dessertHighlight = spots
+  .filter(s => s.type === 'dessert')
+  .sort((a, b) => (b.review_count || 0) - (a.review_count || 0))
+  .slice(0, 4)
+
 const stats = [
   { label: '景點 / 公園', value: `${spots.filter(s => s.type === 'attraction' || s.type === 'park').length}` },
   { label: '親子餐廳', value: `${spots.filter(s => s.type === 'restaurant').length}` },
@@ -108,6 +113,42 @@ export default function HomePage() {
                       <span>✓</span><span className="line-clamp-1">{spot.review_summary.pros[0]}</span>
                     </p>
                   )}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Dessert/snack highlights */}
+      <section className="max-w-5xl mx-auto px-4 py-14">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">社群爆紅甜點 / 小吃</h2>
+            <p className="text-gray-500 mt-1">近半年話題，包含便利商店限定、IG 熱搜必吃</p>
+          </div>
+          <Link href="/spots?type=dessert" className="text-blue-600 hover:text-blue-700 font-medium text-sm">查看全部甜點 →</Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {dessertHighlight.map(spot => (
+            <Link key={spot.id} href={`/spots/${spot.slug}`} className="group">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                <div className="relative h-44">
+                  <Image src={spot.image_url} alt={spot.name_zh} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="380px" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                  <div className="absolute top-3 left-3">
+                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${getTypeColor(spot.type)}`}>
+                      {getTypeIcon(spot.type)} {typeLabels[spot.type]}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 truncate">{spot.name_zh}</h3>
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-2">{spot.description}</p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-xs text-yellow-600">⭐⭐ {spot.rating}</span>
+                    <span className="text-xs text-green-600">👍 {spot.review_count}+ 評論</span>
+                  </div>
                 </div>
               </div>
             </Link>
