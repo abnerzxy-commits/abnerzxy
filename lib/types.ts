@@ -92,11 +92,18 @@ export interface Spot {
   review_count?: number
 }
 
+export interface TravelFromPrev {
+  mode: 'walk' | 'chartered' | 'uber' | 'capsule'
+  minutes: number
+  note?: string
+}
+
 export interface ItineraryScheduleItem {
   spotId: string
   start: string
   duration: number
   note?: string
+  travelFromPrev?: TravelFromPrev
 }
 
 export interface ItineraryDay {

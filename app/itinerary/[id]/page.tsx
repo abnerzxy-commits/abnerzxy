@@ -17,6 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 const transportLabel: Record<string, string> = {
   walk: '🚶 步行',
+  chartered: '🚐 包車',
+  uber: '🚕 Uber',
+  capsule: '🚃 膠囊列車',
   subway: '🚇 地鐵',
   taxi: '🚕 計程車',
   bus: '🚌 公車',
@@ -147,19 +150,25 @@ export default async function ItineraryDetailPage({ params }: { params: Promise<
                       </div>
 
                       {/* Transport arrow between items */}
-                      {!isLast && (
-                        <div className="flex gap-4 my-2">
-                          <div className="w-10 shrink-0 flex justify-center">
-                            <div className="w-0.5 h-8 bg-gray-100" />
+                      {!isLast && (() => {
+                        const nextItem = day.items[idx + 1]
+                        const travel = nextItem?.travelFromPrev
+                        if (!travel) return null
+                        return (
+                          <div className="flex gap-4 my-2">
+                            <div className="w-10 shrink-0 flex justify-center">
+                              <div className="w-0.5 h-8 bg-gray-100" />
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-gray-400 pl-2">
+                              <span>↓</span>
+                              <span className="bg-gray-100 px-2 py-1 rounded-full">
+                                {transportLabel[travel.mode] || travel.mode} 約 {travel.minutes} 分鐘
+                                {travel.note && `（${travel.note}）`}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-gray-400 pl-2">
-                            <span>↓</span>
-                            <span className="bg-gray-100 px-2 py-1 rounded-full">
-                              {transportLabel['subway']} 約 15–30 分鐘
-                            </span>
-                          </div>
-                        </div>
-                      )}
+                        )
+                      })()}
                     </div>
                   )
                 })}
