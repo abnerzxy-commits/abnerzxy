@@ -202,79 +202,6 @@ export const spots: Spot[] = [
   // ══════════════════════════════════════════════════════
   // 親子友善餐廳（2-6歲）
   // ══════════════════════════════════════════════════════
-      {
-        platform: 'AutoReserve',
-        url: 'https://autoreserve.com/en/restaurants/GbcEV3GwGU2vgvUx9SsS',
-        label: '線上等位（AutoReserve）',
-        note: '可線上加入候位，不用現場排隊',
-      },
-      {
-        platform: 'Tabling',
-        url: 'https://www.tabling.co.kr/restaurant/2116',
-        label: 'Tabling 線上候位',
-        note: '遠端候位，到附近再去取號',
-      },
-    ],
-    staff_phrases: [
-      { situation: '我們幾個人（例：4人）', korean: '네 명이요' },
-      { situation: '幫小孩把肉剪小塊', korean: '아이 거 작게 잘라 주세요' },
-      { situation: '加點蒸蛋', korean: '계란찜 주세요' },
-      { situation: '加點飯', korean: '공기밥 주세요' },
-      { situation: '要一杯水', korean: '물 주세요' },
-      { situation: '有嬰兒椅嗎？', korean: '아기 의자 있어요?' },
-      { situation: '結帳', korean: '계산해 주세요' },
-      { situation: '刷卡可以嗎？', korean: '카드 돼요?' },
-    ],
-    recommended_dishes: [
-      { name_ko: '왕소금구이', name_zh: '鹽烤豬五花', price_krw: 14000, description: '天然岩鹽調味，炭烤酥脆，完全無辣，小孩最愛', must_order: true },
-      { name_ko: '계란찜', name_zh: '蒸蛋', price_krw: 2000, description: '軟嫩蒸蛋，小孩必點', must_order: true },
-    ],
-    ordering_tips: [
-      '最低點3份，2人份可請店員確認',
-      '烤鍋外圈同時煎蛋，說「계란 주세요」加點蛋',
-      '幫小孩剪肉說「작게 잘라주세요」',
-      '不需預約，用自動叫號機取號等候',
-    ],
-    review_summary: {
-      pros: ['肉質水準穩定，是釜山最推薦的豬五花', '自動叫號不用站著排隊', '熱鬧環境帶小孩完全不尷尬', '蛋黃圈是亮點，小孩很愛'],
-      cons: ['晚餐尖峰6-8點等待20-40分鐘', '只有豬肉，沒有牛肉或雞肉', '週末尤其需要耐心等候'],
-    },
-    opening_hours: { mon: '11:30-23:00', tue: '11:30-23:00', wed: '11:30-23:00', thu: '11:30-23:00', fri: '11:30-23:00', sat: '11:30-23:00', sun: '11:30-23:00' },
-    tips: ['避開晚餐尖峰，建議5:30之前或8:30之後前往', '地鐵2號線西面站步行3分鐘'],
-    tags: ['豬五花', '無辣', '親子', '西面', '必吃'],
-    rating: 4.7,
-    review_count: 3200,
-  },
-    ],
-    staff_phrases: [
-      { situation: '我們幾個人（例：4人）', korean: '네 명이요' },
-      { situation: '要清湯冷麵（無辣）', korean: '물밀면 주세요' },
-      { situation: '要水餃', korean: '개금만두 주세요' },
-      { situation: '辣醬請分開放', korean: '양념 따로 주세요' },
-      { situation: '幫小孩把麵剪短', korean: '면 짧게 잘라 주세요' },
-      { situation: '要一杯水', korean: '물 주세요' },
-      { situation: '結帳', korean: '계산해 주세요' },
-    ],
-    recommended_dishes: [
-      { name_ko: '물밀면', name_zh: '清湯冷麵', price_krw: 10000, description: '牛骨清湯，完全無辣，Q彈麵條，小孩適合', must_order: true },
-      { name_ko: '개금만두', name_zh: '開琴水餃', price_krw: 4000, description: '招牌水餃，無辣，小孩最愛，必點', must_order: true },
-      { name_ko: '비빔밀면', name_zh: '辣拌冷麵', price_krw: 10000, description: '大人版，醬料可要求分開', must_order: false },
-    ],
-    ordering_tips: [
-      '帶小孩點「물밀면（湯麵）」+ 「개금만두（水餃）」最安全',
-      '辣醬分開說「양념 따로 주세요」',
-      '麵條可幫小孩剪短「짧게 잘라주세요」',
-    ],
-    review_summary: {
-      pros: ['釜山在地必吃，是真正的釜山日常味道', '水餃超好吃，份量實在', '價格超實惠，全家吃飽不到台幣500'],
-      cons: ['店面較小，午餐尖峰可能等位', '環境簡單，無特別裝潢', '冷麵對2歲以下幼兒可能難以咀嚼'],
-    },
-    opening_hours: { mon: '11:00-21:00', tue: '11:00-21:00', wed: '11:00-21:00', thu: '11:00-21:00', fri: '11:00-21:00', sat: '11:00-21:00', sun: '11:00-20:00' },
-    tips: ['午餐時段避開12-1點', '地鐵2號線開琴站附近'],
-    tags: ['冷麵', '水餃', '釜山料理', '便宜', '無辣', '親子'],
-    rating: 4.5,
-    review_count: 1800,
-  },
 
   {
     id: 'r6',
@@ -332,42 +259,6 @@ export const spots: Spot[] = [
     tags: ['豬五花', '無辣', '親子', '海雲台'],
     rating: 4.6,
     review_count: 1500,
-  },
-
-  // ══════════════════════════════════════════════════════
-  // 親子友善公園（高評價 + 遊樂設施）
-  // ══════════════════════════════════════════════════════
-    opening_hours: { mon: '09:00-18:00', tue: '09:00-18:00', wed: '09:00-18:00', thu: '09:00-18:00', fri: '09:00-18:00', sat: '09:00-18:00', sun: '09:00-18:00', note: '水樂園：10:00-17:00，週一休息' },
-    tips: [
-      '公園本身免費，動物園兒童₩15,000另付',
-      '夏天記得帶泳衣和備用衣服去玩水樂園',
-      '從西面站搭54、81、133號公車直達',
-    ],
-    tags: ['免費', '公園', '遊樂場', '水樂園', '動物園', '親子', '幼兒'],
-    rating: 4.7,
-    review_count: 5200,
-  },
-    opening_hours: { mon: '05:00-23:00', tue: '05:00-23:00', wed: '05:00-23:00', thu: '05:00-23:00', fri: '05:00-23:00', sat: '05:00-23:00', sun: '05:00-23:00', note: '室內兒童咖啡廳：週二-六 10:00-17:20，週日一休館' },
-    tips: [
-      '地鐵1號線釜田站或蓋金站步行可達',
-      '室內兒童咖啡廳雨天必去，0-7歲免費',
-      '水廣場運作時間：10:30-19:30，每2小時25分鐘噴水',
-    ],
-    tags: ['免費', '公園', '遊樂場', '推車友善', '室內', '幼兒', '水廣場'],
-    rating: 4.6,
-    review_count: 4100,
-  },
-    opening_hours: { tue: '09:00-18:00', wed: '09:00-18:00', thu: '09:00-18:00', fri: '09:00-18:00', sat: '09:00-18:00', sun: '09:00-18:00', note: '週一休館' },
-    tips: ['13歲以下兒童免費，需成人陪同', '備妥防曬，戶外全日曝曬'],
-    tags: ['免費', '新開幕', '遊樂場', '飛索', '溜滑梯', '戶外'],
-    rating: 4.5,
-    review_count: 320,
-  },
-    opening_hours: { mon: '09:00-18:00', tue: '09:00-18:00', wed: '09:00-18:00', thu: '09:00-18:00', fri: '09:00-21:00', sat: '09:00-21:00', sun: '09:00-21:00', note: '纜車：大人₩15,000，3歲以下免費' },
-    tips: ['地鐵1號線土城站搭公車或計程車約10分鐘', '蝸牛溜滑梯旁有小型遊樂設施'],
-    tags: ['公園', '溜滑梯', '海景', '打卡', '蝸牛', '恐龍', '親子'],
-    rating: 4.4,
-    review_count: 2800,
   },
 
   // ══════════════════════════════════════════════════════
@@ -779,49 +670,10 @@ export const spots: Spot[] = [
     rating: 4.3,
     review_count: 2800,
   },
-    ],
-    staff_phrases: [
-      { situation: '我們幾個人（例：4人）', korean: '네 명이요' },
-      { situation: '辣醬請分開放', korean: '다대기 따로 주세요' },
-      { situation: '有包廂嗎？（帶孩子）', korean: '방 있어요?' },
-      { situation: '湯可以再加嗎？', korean: '국물 더 주세요' },
-      { situation: '追加一碗飯', korean: '공기밥 주세요' },
-      { situation: '要一杯水', korean: '물 주세요' },
-      { situation: '有嬰兒椅嗎？', korean: '아기 의자 있어요?' },
-      { situation: '結帳', korean: '계산해 주세요' },
-    ],
-    recommended_dishes: [
-      { name_ko: '돼지국밥', name_zh: '豬肉湯飯', price_krw: 9000, description: '濃郁豬骨白湯，無腥味，辣醬自加', must_order: true },
-      { name_ko: '수육백반', name_zh: '白切豬肉套餐', price_krw: 11000, description: '厚切白切豬肉配湯飯，小孩好咬', must_order: true },
-      { name_ko: '돼지수육', name_zh: '白切豬肉（大份）', price_krw: 28000, description: '多人分享用，搭配湯頭最完美', must_order: false },
-    ],
-    ordering_tips: [
-      '辣醬（다대기）自行添加，給小孩的碗完全不加',
-      '想包廂可詢問「방 있어요?」（有包廂嗎？）',
-      '湯頭可免費續，說「국물 더 주세요」',
-      '幫小孩選「수육백반」，肉比較容易撕小塊',
-    ],
-    review_summary: {
-      pros: ['豬骨白湯濃郁無腥味，是釜山公認最好喝的湯底之一', '有包廂選項，帶孩子不怕吵到別人', '公道價格認定店，份量大價格公平', '湯頭和豬肉可免費續，非常划算'],
-      cons: ['週日休息，行程安排要注意', '停車位只有5台份，開車建議提早或附近停', '距海雲台需搭車15-20分鐘，不在觀光主線上', '午餐尖峰（12-1點）排隊等候'],
-    },
-    opening_hours: { mon: '10:00-21:30', tue: '10:00-21:30', wed: '10:00-21:30', thu: '10:00-21:30', fri: '10:00-21:30', sat: '10:00-21:30', note: '週日公休（일요일 정기휴무）' },
-    tips: [
-      '週日休息，出發前確認',
-      '避開午餐尖峰12-13點，建議11:30前或14:00後',
-      '地鐵2號線大淵站步行約10分鐘',
-    ],
-    tags: ['豬肉湯飯', '傳統', '無辣', '親子', '包廂', '釜山料理', '大淵洞'],
-    rating: 4.4,
-    review_count: 1300,
-  },
 
   // ══════════════════════════════════════════════════════
   // 兒童購物（K 系列）
   // ══════════════════════════════════════════════════════
-    rating: 4.2,
-    review_count: 890,
-  },
 
   {
     id: 'k2',
@@ -917,24 +769,6 @@ export const spots: Spot[] = [
     tags: ['甜點', '果凍餅', '海雲台', '社群熱門', '伴手禮'],
     rating: 4.8,
     review_count: 12500,
-  },
-    opening_hours: { mon: '11:00-21:00', tue: '11:00-21:00', wed: '11:00-21:00', thu: '11:00-21:00', fri: '11:00-21:00', sat: '11:00-21:00', sun: '11:00-21:00' },
-    tips: ['西面逛街必訪，IG熱門打卡點', '杜拜系列甜點超夯', '適合買來試試釜山新潮甜點'],
-    tags: ['甜點', '麵包', '杜拜巧克力', '西面', '社群熱門'],
-    rating: 4.6,
-    review_count: 3200,
-  },
-    opening_hours: { mon: '11:00-20:00', tue: '11:00-20:00', wed: '11:00-20:00', thu: '11:00-20:00', fri: '11:00-20:00', sat: '11:00-20:00', sun: '11:00-20:00' },
-    tips: ['IG視頻破億，超夯銅鑼燒', '適合買來試試日式甜點', '東區逛街時可順便訪'],
-    tags: ['甜點', '銅鑼燒', '大福', '東區', '社群熱門'],
-    rating: 4.7,
-    review_count: 1800,
-  },
-    opening_hours: { mon: '12:00-21:00', tue: '12:00-21:00', wed: '12:00-21:00', thu: '12:00-21:00', fri: '12:00-21:00', sat: '12:00-21:00', sun: '12:00-21:00' },
-    tips: ['西面必訪甜點店，杜拜系列超夯', 'IG觀看數破60萬', '適合買來試試釜山新潮甜點'],
-    tags: ['甜點', '山多士', '杜拜巧克力', '西面', '社群熱門'],
-    rating: 4.5,
-    review_count: 950,
   },
 
   {
@@ -1099,12 +933,8 @@ export const priceLabels: Record<string, string> = {
 export const districts = [
   { id: 'all', name: '全部' },
   { id: '海雲台', name: '海雲台' },
-  { id: '西面', name: '西面' },
-  { id: '釜山鎮區', name: '釜山鎮區' },
   { id: 'Centum/海雲台', name: 'Centum' },
   { id: '機張', name: '機張' },
-  { id: '東區', name: '東區' },
-  { id: '西區', name: '西區' },
   { id: '影島', name: '影島' },
   { id: '全釜山', name: '全釜山' },
 ]
@@ -1113,7 +943,6 @@ export const filterTypes = [
   { id: 'all', label: '全部' },
   { id: 'restaurant', label: '🍽 餐廳' },
   { id: 'dessert', label: '🍰 甜點/小吃' },
-  { id: 'park', label: '🌳 公園' },
   { id: 'attraction', label: '🎡 景點' },
   { id: 'shopping', label: '🛍 購物/票券' },
 ]
@@ -1151,41 +980,40 @@ export const suggestedItineraries: SuggestedItinerary[] = [
     id: 'busan-kids-day',
     title: '釜山親子一日精華',
     days: 1,
-    description: '適合2-6歲小孩的一天行程：水族館→公園→親子晚餐，全程無辣',
+    description: '適合2-6歲小孩的一天行程：水族館→海灘小火車→親子晚餐，全程無辣',
     image_url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80',
-    spotIds: ['a1', 'p2', 'r4'],
+    spotIds: ['a1', 'a3', 'r6'],
     schedule: [
       {
         day: 1, title: '親子完整一天',
         items: [
           { spotId: 'a1', start: '10:00', duration: 120, note: 'SEA LIFE水族館，3歲以下免費，提前網購省30%' },
-          { spotId: 'p2', start: '13:30', duration: 150, note: '市民公園，午餐後散步玩遊樂場' },
-          { spotId: 'r4', start: '18:00', duration: 90, note: '맛찬들鹽烤豬肉，完全無辣，小孩最愛' },
+          { spotId: 'a3', start: '13:30', duration: 90, note: '藍線公園海灘小火車，沿海岸欣賞東海海景' },
+          { spotId: 'r6', start: '18:00', duration: 90, note: '맛찬들鹽烤豬肉海雲台店，完全無辣，小孩最愛' },
         ],
       },
     ],
   },
   {
     id: 'busan-kids-park-tour',
-    title: '釜山公園遊樂場巡禮',
+    title: '釜山親子景點巡禮',
     days: 2,
-    description: '兩天玩遍釜山最棒的親子公園，全部免費，2-6歲必訪',
+    description: '兩天玩遍釜山最棒的親子景點，2-6歲必訪',
     image_url: 'https://images.unsplash.com/photo-1575783970733-1aaedde1db74?w=600&q=80',
-    spotIds: ['p1', 'r5', 'p2', 'a2', 'r4'],
+    spotIds: ['a3', 'g1', 'a2', 'r6'],
     schedule: [
       {
-        day: 1, title: '兒童大公園＋開琴冷麵',
+        day: 1, title: '藍線公園＋豬肉湯飯',
         items: [
-          { spotId: 'p1', start: '09:30', duration: 240, note: '釜山兒童大公園，帶泳衣玩免費水樂園！' },
-          { spotId: 'r5', start: '12:00', duration: 60, note: '開琴밀면，清湯冷麵+水餃，無辣又便宜' },
+          { spotId: 'a3', start: '09:30', duration: 90, note: '藍線公園海灘小火車，帶幼兒首選' },
+          { spotId: 'g1', start: '12:00', duration: 60, note: '密陽純大豬肉湯飯，24H營業，幼兒清湯無辣' },
         ],
       },
       {
-        day: 2, title: '市民公園＋海洋博物館',
+        day: 2, title: '海洋博物館＋親子晚餐',
         items: [
-          { spotId: 'p2', start: '10:00', duration: 150, note: '市民公園，室內兒童咖啡廳（雨天備案）' },
-          { spotId: 'a2', start: '14:00', duration: 150, note: '國立海洋博物館，完全免費！幼兒互動區' },
-          { spotId: 'r4', start: '18:30', duration: 90, note: '맛찬들鹽烤豬肉收尾' },
+          { spotId: 'a2', start: '10:00', duration: 150, note: '國立海洋博物館，完全免費！幼兒互動區' },
+          { spotId: 'r6', start: '18:30', duration: 90, note: '맛찬들鹽烤豬肉海雲台店收尾' },
         ],
       },
     ],
