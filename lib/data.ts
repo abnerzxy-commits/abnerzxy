@@ -395,7 +395,7 @@ export const spots: Spot[] = [
       },
       {
         platform: 'KKday',
-        url: 'https://www.kkday.com/en-us/product/123012-haeundae-blueline-park-beach-train-sky-capsule-ticket-korea',
+        url: 'https://www.kkday.com/en-us/product/123012-haeundae-blueline-park-sky-capsule-beach-train-ticket',
         label: 'KKday 購票',
       },
     ],
@@ -567,7 +567,7 @@ export const spots: Spot[] = [
       },
       {
         platform: 'KKday',
-        url: 'https://www.kkday.com/en/product/145568-visit-busan-pass',
+        url: 'https://www.kkday.com/en/product/138477-visit-busan-pass-discount-free-attractions',
         label: 'KKday 購買',
       },
     ],
@@ -1263,12 +1263,12 @@ export const spots: Spot[] = [
     reservation_links: [
       {
         platform: 'Official',
-        url: 'https://www.skylineluge.com/busan/',
+        url: 'https://busan.skylineluge.com/en/',
         label: '官網購票',
       },
       {
         platform: 'KKday',
-        url: 'https://www.kkday.com/en/product/35045-skyline-luge-busan',
+        url: 'https://www.kkday.com/en-us/product/152412-gijang-skyline-luge-ticket-busan-south-korea',
         label: 'KKday 購票',
       },
     ],
