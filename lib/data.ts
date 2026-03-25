@@ -1458,7 +1458,7 @@ export const suggestedItineraries: SuggestedItinerary[] = [
     spotIds: ['act1', 'act8', 'r7', 'act2', 'act4', 'c1', 'r8', 'p1', 'c2', 'act5', 'a4', 'k2', 'a3', 'act6', 'act7', 'a1', 's1'],
     schedule: [
       {
-        day: 1, title: 'Day 1（4/1）抵達釜山・海雲台逛逛',
+        day: 1, title: 'Day 1（4/1）抵達釜山・海雲台逛逛｜Uber',
         items: [],
       },
       {
@@ -1483,7 +1483,7 @@ export const suggestedItineraries: SuggestedItinerary[] = [
         ],
       },
       {
-        day: 4, title: 'Day 4（4/4）膠囊列車→海灘→廣安里',
+        day: 4, title: 'Day 4（4/4）膠囊列車→海灘→廣安里｜Uber',
         items: [
           { spotId: 'a3', start: '09:30', duration: 90, note: '藍線公園天空膠囊列車，沿海岸欣賞海景' },
           { spotId: 'act6', start: '11:30', duration: 40, note: '青沙浦天空步道，免費透明玻璃步道（視天氣決定）' },
@@ -1491,14 +1491,14 @@ export const suggestedItineraries: SuggestedItinerary[] = [
         ],
       },
       {
-        day: 5, title: 'Day 5（4/5）水族館→海灘→新世界百貨',
+        day: 5, title: 'Day 5（4/5）水族館→海灘→新世界百貨｜Uber',
         items: [
           { spotId: 'a1', start: '10:00', duration: 120, note: 'SEA LIFE 水族館，3歲以下免費，提前網購省30%' },
           { spotId: 's1', start: '15:00', duration: 180, note: '新世界百貨 Centum City 逛街，B1外國旅客服務台領折扣券。中間可在海雲台海灘玩沙' },
         ],
       },
       {
-        day: 6, title: 'Day 6（4/6）回家',
+        day: 6, title: 'Day 6（4/6）回家｜Uber',
         items: [],
       },
     ],
