@@ -1406,6 +1406,59 @@ export const spots: Spot[] = [
     rating: 4.4,
     review_count: 1800,
   },
+
+  {
+    id: 'act9',
+    slug: 'spaland-centum-city',
+    name_ko: '신세계 스파랜드 센텀시티',
+    name_zh: 'Spa Land 汗蒸幕（新世界 Centum City）',
+    name_en: 'Shinsegae Spa Land Centum City',
+    type: 'activity',
+    description: '位於新世界百貨 Centum City 內的高級汗蒸幕，有13種不同主題的溫泉池和桑拿房，包括芬蘭桑拿、羅馬浴場、炭窯等。環境乾淨高級，是釜山最受歡迎的汗蒸幕體驗。泡完直接逛新世界百貨超方便。',
+    address_ko: '부산 해운대구 센텀남대로 35 신세계센텀시티 1층',
+    address_zh: '釜山海雲台區Centum南大路35號 新世界Centum City 1樓',
+    district: '海雲台',
+    city: '釜山',
+    lat: 35.1688,
+    lng: 129.1308,
+    image_url: 'https://images.unsplash.com/photo-1540555700478-4be289fbec6d?w=800&q=80',
+    price_range: 'moderate',
+    ticket_price_krw: 18000,
+    ticket_price_free: false,
+    time_needed_minutes: 180,
+    best_time_to_visit: '平日上午，人少環境舒適',
+    kid_friendly_score: 3,
+    kid_friendly_notes: '未滿7歲（小學入學前）兒童不可入場。適合大人放鬆，小孩需有人照顧或安排其他活動。',
+    min_age: 7,
+    reservation_links: [
+      {
+        platform: 'Official',
+        url: 'https://www.shinsegae.com/store/main.do?storeCd=SC00008',
+        label: '新世界百貨官網',
+      },
+    ],
+    staff_phrases: [
+      { situation: '大人兩位', korean: '어른 두 명이요' },
+      { situation: '毛巾在哪裡領？', korean: '수건 어디서 받아요?' },
+      { situation: '置物櫃怎麼用？', korean: '사물함 어떻게 써요?' },
+      { situation: '汗蒸幕在幾樓？', korean: '찜질방 몇 층이에요?' },
+      { situation: '可以刷卡嗎？', korean: '카드 돼요?' },
+    ],
+    review_summary: {
+      pros: ['環境高級乾淨，釜山最好的汗蒸幕', '13種溫泉池和桑拿主題豐富', '就在新世界百貨內，泡完直接逛街', 'Visit Busan Pass 可免費入場'],
+      cons: ['未滿7歲兒童不可入場', '週末人較多', '需自備或加購洗浴用品'],
+    },
+    opening_hours: { mon: '09:00-22:00', tue: '09:00-22:00', wed: '09:00-22:00', thu: '09:00-22:00', fri: '09:00-22:00', sat: '08:00-22:00', sun: '08:00-22:00', note: '最後入場21:00' },
+    tips: [
+      '未滿7歲不可入場，需安排小孩其他活動',
+      'Visit Busan Pass 可免費入場（價值₩18,000）',
+      '泡完直接搭電梯上樓逛新世界百貨',
+      '地鐵2號線 Centum City 站地下直通',
+    ],
+    tags: ['汗蒸幕', '溫泉', 'Spa', '海雲台', 'Centum', '放鬆'],
+    rating: 4.5,
+    review_count: 6800,
+  },
 ]
 
 // ══════════════════════════════════════════════════════════
@@ -1465,7 +1518,7 @@ export const suggestedItineraries: SuggestedItinerary[] = [
     days: 6,
     description: '4/1-4/6 釜山全覽：甘川洞韓服、松島纜車、大渚賞櫻、Luge遛遛車、膠囊列車、廣安里無人機、水族館，Day2&3包車',
     image_url: 'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=600&q=80',
-    spotIds: ['act1', 'act8', 'r7', 'act2', 'act4', 'c1', 'r8', 'p1', 'c2', 'act5', 'a4', 'k2', 'a3', 'act6', 'act7', 'a1', 's1'],
+    spotIds: ['act1', 'act8', 'r7', 'act2', 'act4', 'c1', 'r8', 'p1', 'c2', 'act5', 'a4', 'k2', 'a3', 'act6', 'act7', 'act9', 's1'],
     schedule: [
       {
         day: 1, title: 'Day 1（4/1）抵達釜山・海雲台逛逛｜Uber',
@@ -1501,10 +1554,10 @@ export const suggestedItineraries: SuggestedItinerary[] = [
         ],
       },
       {
-        day: 5, title: 'Day 5（4/5）水族館→海灘→新世界百貨｜Uber',
+        day: 5, title: 'Day 5（4/5）汗蒸幕→逛街 or 玩沙｜Uber',
         items: [
-          { spotId: 'a1', start: '10:00', duration: 120, note: 'SEA LIFE 水族館，3歲以下免費，提前網購省30%' },
-          { spotId: 's1', start: '15:00', duration: 180, note: '新世界百貨 Centum City 逛街，B1外國旅客服務台領折扣券。中間可在海雲台海灘玩沙' },
+          { spotId: 'act9', start: '10:00', duration: 180, note: 'Spa Land 汗蒸幕（新世界 Centum City 1F），注意：未滿7歲不可入場，需安排小孩其他活動' },
+          { spotId: 's1', start: '14:00', duration: 180, note: '新世界百貨 Centum City 逛街，B1外國旅客服務台領折扣券。或去海雲台海灘玩沙' },
         ],
       },
       {
