@@ -1493,7 +1493,7 @@ export const suggestedItineraries: SuggestedItinerary[] = [
         ],
       },
       {
-        day: 4, title: 'Day 4（4/4）膠囊列車→海灘→廣安里｜Uber',
+        day: 4, title: 'Day 4（4/4）海雲台：膠囊列車→海灘→晚上Uber去廣安里',
         items: [
           { spotId: 'a3', start: '09:30', duration: 90, note: '藍線公園天空膠囊列車，沿海岸欣賞海景' },
           { spotId: 'act6', start: '11:30', duration: 40, note: '青沙浦天空步道，免費透明玻璃步道（視天氣決定）' },
