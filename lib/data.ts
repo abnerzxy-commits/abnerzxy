@@ -1035,37 +1035,6 @@ export const spots: Spot[] = [
   },
 
   {
-    id: 'act3',
-    slug: 'thrill-on-the-lug-yeongdo',
-    name_ko: '스릴 온 더 러그 영도',
-    name_zh: 'Thrill on the Lug 影島',
-    name_en: 'Thrill on the Lug Yeongdo',
-    type: 'activity',
-    description: '影島的人氣戶外冒險體驗設施，結合高空與速度的刺激活動，適合喜歡冒險的家庭。在影島海岸邊享受獨特的戶外體驗。',
-    address_ko: '부산 영도구 영도 해안 일대',
-    address_zh: '釜山影島區海岸一帶',
-    district: '影島',
-    city: '釜山',
-    lat: 35.0780,
-    lng: 129.0680,
-    image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80',
-    price_range: 'moderate',
-    avg_price_krw: 25000,
-    time_needed_minutes: 60,
-    kid_friendly_score: 3,
-    kid_friendly_notes: '部分設施有身高限制，建議現場確認適合小孩的項目。',
-    review_summary: {
-      pros: ['影島海岸邊的獨特體驗', '適合喜歡冒險的家庭', '拍照好看'],
-      cons: ['部分設施有身高限制', '天氣不好可能暫停'],
-    },
-    opening_hours: { mon: '10:00-18:00', tue: '10:00-18:00', wed: '10:00-18:00', thu: '10:00-18:00', fri: '10:00-18:00', sat: '10:00-18:00', sun: '10:00-18:00' },
-    tips: ['Day 2 下午，松島纜車後包車前往', '建議先查詢營業狀態'],
-    tags: ['戶外', '冒險', '影島', '體驗'],
-    rating: 4.3,
-    review_count: 800,
-  },
-
-  {
     id: 'act4',
     slug: 'art-museum-yeongdo',
     name_ko: '영도 아트뮤지엄',
@@ -1248,7 +1217,7 @@ export const spots: Spot[] = [
     },
     opening_hours: { sat: '20:00-20:15', note: '僅週六晚間，約15-20分鐘。時間依季節調整，出發前請上官網確認' },
     tips: [
-      '4/4 是週五，需確認當週是否有加場或改期',
+      '4/4 是週六，正好是固定演出日',
       '建議提早30分鐘到海灘佔好位置',
       '從海雲台搭計程車約15分鐘',
       '看完後可在廣安里海灘旁吃晚餐',
@@ -1316,7 +1285,7 @@ export const suggestedItineraries: SuggestedItinerary[] = [
     days: 6,
     description: '4/1-4/6 釜山全覽：甘川洞韓服、松島纜車、大渚賞櫻、Luge遛遛車、膠囊列車、廣安里無人機、水族館，Day2&3包車',
     image_url: 'https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=600&q=80',
-    spotIds: ['act1', 'r7', 'act2', 'act3', 'act4', 'p1', 'act5', 'a4', 'k2', 'a3', 'act6', 'act7', 'a1', 's1'],
+    spotIds: ['act1', 'r7', 'act2', 'act4', 'p1', 'act5', 'a4', 'k2', 'a3', 'act6', 'act7', 'a1', 's1'],
     schedule: [
       {
         day: 1, title: 'Day 1（4/1）抵達釜山・海雲台逛逛',
@@ -1328,8 +1297,7 @@ export const suggestedItineraries: SuggestedItinerary[] = [
           { spotId: 'act1', start: '09:30', duration: 120, note: '甘川洞韓服體驗（衣裳貸與），穿韓服逛彩色村落拍照' },
           { spotId: 'r7', start: '12:00', duration: 90, note: '明星一隻雞，整隻雞湯鍋午餐' },
           { spotId: 'act2', start: '14:00', duration: 60, note: '松島海上纜車，俯瞰松島海灣' },
-          { spotId: 'act3', start: '15:30', duration: 60, note: 'Thrill on the Lug 影島，戶外冒險體驗' },
-          { spotId: 'act4', start: '17:00', duration: 90, note: '影島藝術博物館，看完包車回飯店' },
+          { spotId: 'act4', start: '15:30', duration: 90, note: '影島藝術博物館，看完包車回飯店' },
         ],
       },
       {
@@ -1345,7 +1313,7 @@ export const suggestedItineraries: SuggestedItinerary[] = [
         items: [
           { spotId: 'a3', start: '09:30', duration: 90, note: '藍線公園天空膠囊列車，沿海岸欣賞海景' },
           { spotId: 'act6', start: '11:30', duration: 40, note: '青沙浦天空步道，免費透明玻璃步道（視天氣決定）' },
-          { spotId: 'act7', start: '20:00', duration: 30, note: '廣安里無人機表演（需確認當日是否有演出）。下午可在海灘玩沙或搭遊艇' },
+          { spotId: 'act7', start: '20:00', duration: 30, note: '廣安里無人機表演（週六固定演出）。下午可在海灘玩沙或搭遊艇' },
         ],
       },
       {
