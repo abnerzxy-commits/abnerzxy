@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Noto_Sans_TC } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import AddToHomeScreen from '@/components/AddToHomeScreen'
 
 const notoSansTC = Noto_Sans_TC({
   subsets: ['latin'],
@@ -26,12 +27,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="zh-TW" className={`h-full ${notoSansTC.variable}`}>
       <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="帶娃衝釜山" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-2JFTSLLGJ5" />
         <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-2JFTSLLGJ5")` }} />
       </head>
       <body className={`min-h-full flex flex-col bg-gray-50 ${notoSansTC.className}`}>
         <Navbar />
         <main className="flex-1">{children}</main>
+        <AddToHomeScreen />
         <footer className="bg-gray-900 text-gray-400 text-sm py-8 mt-16">
           <div className="max-w-6xl mx-auto px-4 text-center space-y-2">
             <p className="text-white font-semibold text-base">🇰🇷 帶娃衝釜山</p>
