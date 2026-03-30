@@ -1666,9 +1666,7 @@ export const suggestedItineraries: SuggestedItinerary[] = [
           { spotId: 'act6', start: '11:00', duration: 40, note: '青沙浦天空步道，免費透明玻璃步道', travelFromPrev: { mode: 'capsule', minutes: 30, note: '搭膠囊列車沿海岸到青沙浦' } },
           { spotId: 'r9', start: '12:00', duration: 75, note: '尾浦家午餐，1976年老店醬油蟹拌飯', travelFromPrev: { mode: 'uber', minutes: 10, note: '青沙浦→尾浦家' } },
           { spotId: 'a1', start: '14:00', duration: 120, note: 'SEA LIFE 水族館，鯊魚隧道、企鵝表演，3歲以下免費', travelFromPrev: { mode: 'uber', minutes: 10, note: '尾浦家→海雲台海灘' } },
-          { start: '16:30', duration: 90, note: '海雲台海灘玩沙，水族館出來旁邊就是沙灘，讓小孩放電' },
-          { start: '18:30', duration: 60, note: '晚餐（海雲台周邊自由選擇）' },
-          { spotId: 'act7', start: '20:00', duration: 30, note: '廣安里無人機表演（週六固定演出）', travelFromPrev: { mode: 'uber', minutes: 20, note: '海雲台→廣安里' } },
+          { spotId: 'act7', start: '20:00', duration: 30, note: '廣安里無人機表演（週六固定演出）。下午水族館出來後可在海雲台海灘玩沙，晚餐海雲台周邊自由選擇', travelFromPrev: { mode: 'uber', minutes: 20, note: '海雲台→廣安里' } },
         ],
       },
       {
