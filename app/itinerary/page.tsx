@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { suggestedItineraries, spots } from '@/lib/data'
+
+export const metadata: Metadata = {
+  title: '行程模板 | 帶娃衝釜山',
+  description: '精心規劃的釜山親子行程模板，含時間安排、票價、交通建議，直接套用出發。',
+}
 
 export default function ItineraryListPage() {
   return (
@@ -8,7 +14,7 @@ export default function ItineraryListPage() {
       <div className="mb-10 text-center">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">行程模板</h1>
         <p className="text-gray-500 text-lg max-w-xl mx-auto">
-          精心規劃的韓國行程，含時間安排、票價、交通建議，直接套用出發
+          精心規劃的釜山親子行程，含時間安排、票價、交通建議，直接套用出發
         </p>
       </div>
 
@@ -75,7 +81,7 @@ export default function ItineraryListPage() {
         <div className="text-4xl mb-3">✏️</div>
         <h2 className="text-2xl font-bold mb-2">想要客製化行程？</h2>
         <p className="text-blue-100 mb-6 max-w-md mx-auto">
-          前往景點頁面，選好你想去的地方，根據模板自行調整，打造專屬的韓國行程
+          前往景點頁面，選好你想去的地方，根據模板自行調整，打造專屬的釜山行程
         </p>
         <Link href="/spots" className="inline-block bg-white text-blue-600 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors">
           瀏覽景點餐廳

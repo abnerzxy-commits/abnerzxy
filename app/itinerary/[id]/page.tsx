@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params
   const itin = suggestedItineraries.find(i => i.id === id)
   if (!itin) return {}
-  return { title: `${itin.title} | 韓遊通行程`, description: itin.description }
+  return { title: `${itin.title} | 帶娃衝釜山行程`, description: itin.description }
 }
 
 const transportLabel: Record<string, string> = {

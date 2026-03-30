@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Spot } from '@/lib/types'
 import { cn, formatKRW, getTypeColor, getTypeIcon } from '@/lib/utils'
-import { typeLabels, spiceLevelLabels } from '@/lib/data'
+import { typeLabels } from '@/lib/data'
 
 function KidScore({ score }: { score: number }) {
   return (

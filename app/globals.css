@@ -22,7 +22,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Noto Sans TC', 'Apple SD Gothic Neo', Arial, sans-serif;
+  font-family: var(--font-noto-sans-tc), 'Apple SD Gothic Neo', Arial, sans-serif;
 }
 
 @keyframes fade-in {

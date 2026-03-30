@@ -127,7 +127,13 @@ ${rawContent}
       return NextResponse.json({ error: 'Failed to parse AI response', raw: responseText }, { status: 500 })
     }
 
-    const extracted = JSON.parse(jsonMatch[0])
+    let extracted
+    try {
+      extracted = JSON.parse(jsonMatch[0])
+    } catch {
+      return NextResponse.json({ error: 'AI 回傳的 JSON 格式無效', raw: responseText }, { status: 500 })
+    }
+
     return NextResponse.json({
       success: true,
       data: extracted,

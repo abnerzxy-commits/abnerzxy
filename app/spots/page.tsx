@@ -1,6 +1,7 @@
 'use client'
 import { useState, useMemo, useCallback } from 'react'
 import { Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { spots, filterTypes } from '@/lib/data'
 import SpotCard from '@/components/SpotCard'
 
@@ -19,8 +20,11 @@ function haversine(lat1: number, lng1: number, lat2: number, lng2: number): numb
 }
 
 function SpotsContent() {
+  const searchParams = useSearchParams()
+  const initialType = searchParams.get('type') ?? 'all'
+
   const [query, setQuery] = useState('')
-  const [typeFilter, setTypeFilter] = useState('all')
+  const [typeFilter, setTypeFilter] = useState(initialType)
   const [kidFilter, setKidFilter] = useState(0)
   const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null)
   const [sortByDist, setSortByDist] = useState(false)

@@ -27,10 +27,9 @@ const platformIcons: Record<string, string> = {
 interface Props {
   links: ReservationLink[]
   reservationRequired?: boolean
-  name: string
 }
 
-export default function ReservationSection({ links, reservationRequired, name }: Props) {
+export default function ReservationSection({ links, reservationRequired }: Props) {
   const [selectedDate, setSelectedDate] = useState('')
 
   // Today's date in YYYY-MM-DD for min

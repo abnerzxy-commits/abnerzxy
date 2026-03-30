@@ -5,9 +5,9 @@ import { getTypeColor, getTypeIcon } from '@/lib/utils'
 
 const highlights = [
   { id: 'a1', emoji: '🐠' },
-  { id: 'p1', emoji: '🎪' },
-  { id: 'r4', emoji: '🥩' },
-  { id: 'p2', emoji: '🌳' },
+  { id: 'p1', emoji: '🌸' },
+  { id: 'r2', emoji: '🥩' },
+  { id: 'a4', emoji: '🎢' },
   { id: 'a3', emoji: '🚃' },
   { id: 's1', emoji: '🛍' },
 ]
@@ -45,7 +45,7 @@ export default function HomePage() {
           </h1>
           <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-8 leading-relaxed">
             親子景點・公園遊樂場・無辣餐廳・訂位連結・網友優缺點<br />
-            還有你的專屬 5 天行程
+            還有你的專屬 6 天行程
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/spots" className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold px-8 py-4 rounded-2xl text-lg transition-all hover:scale-105 shadow-lg">
@@ -80,7 +80,7 @@ export default function HomePage() {
           <Link href="/spots" className="text-blue-600 hover:text-blue-700 font-medium text-sm">查看全部 →</Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {featuredSpots.map(({ spot, emoji }) => spot && (
+          {featuredSpots.map(({ spot }) => spot && (
             <Link key={spot.id} href={`/spots/${spot.slug}`} className="group">
               <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                 <div className="relative h-44">
@@ -218,6 +218,20 @@ export default function HomePage() {
           </p>
           <Link href="/spots?type=park" className="inline-block bg-white text-emerald-700 font-bold px-6 py-3 rounded-xl hover:bg-emerald-50 transition-colors">
             查看所有親子公園 →
+          </Link>
+        </div>
+      </section>
+
+      {/* Tips CTA */}
+      <section className="bg-gradient-to-br from-amber-600 to-orange-600 text-white py-12">
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <div className="text-4xl mb-3">💱</div>
+          <h2 className="text-2xl font-bold mb-2">換韓元、伴手禮、旅遊須知</h2>
+          <p className="text-amber-100 mb-6 max-w-md mx-auto">
+            匯率怎麼算？現金帶多少？必買伴手禮？<br />出發前看這頁就夠
+          </p>
+          <Link href="/tips" className="inline-block bg-white text-amber-700 font-bold px-6 py-3 rounded-xl hover:bg-amber-50 transition-colors">
+            查看實用資訊 →
           </Link>
         </div>
       </section>

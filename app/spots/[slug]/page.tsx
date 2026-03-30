@@ -171,7 +171,6 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
             <ReservationSection
               links={spot.reservation_links}
               reservationRequired={spot.reservation_required}
-              name={spot.name_ko}
             />
           )}
 
