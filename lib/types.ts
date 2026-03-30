@@ -99,7 +99,7 @@ export interface TravelFromPrev {
 }
 
 export interface ItineraryScheduleItem {
-  spotId: string
+  spotId?: string
   start: string
   duration: number
   note?: string

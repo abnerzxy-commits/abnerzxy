@@ -83,8 +83,7 @@ export default async function ItineraryDetailPage({ params }: { params: Promise<
 
               <div className="space-y-4">
                 {day.items.map((item, idx) => {
-                  const spot = spots.find(s => s.id === item.spotId)
-                  if (!spot) return null
+                  const spot = item.spotId ? spots.find(s => s.id === item.spotId) : null
                   const isLast = idx === day.items.length - 1
 
                   return (
@@ -93,43 +92,53 @@ export default async function ItineraryDetailPage({ params }: { params: Promise<
                         {/* Timeline dot */}
                         <div className="relative shrink-0">
                           <div className="w-10 h-10 bg-white border-2 border-blue-400 rounded-full flex items-center justify-center text-base z-10 relative shadow-sm">
-                            {getTypeIcon(spot.type)}
+                            {spot ? getTypeIcon(spot.type) : '📌'}
                           </div>
                         </div>
 
                         {/* Card */}
                         <div className="flex-1 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                           <div className="flex">
-                            <div className="relative w-28 md:w-36 shrink-0">
-                              <Image src={spot.image_url} alt={spot.name_zh} fill className="object-cover" sizes="144px" />
-                            </div>
+                            {spot && (
+                              <div className="relative w-28 md:w-36 shrink-0">
+                                <Image src={spot.image_url} alt={spot.name_zh} fill className="object-cover" sizes="144px" />
+                              </div>
+                            )}
                             <div className="p-4 flex-1">
                               <div className="flex items-start justify-between gap-2 mb-1">
                                 <div>
                                   <div className="flex items-center gap-2 mb-1">
                                     <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">{item.start}</span>
-                                    <span className={`text-xs px-2 py-0.5 rounded-full ${getTypeColor(spot.type)}`}>
-                                      {typeLabels[spot.type]}
-                                    </span>
+                                    {spot && (
+                                      <span className={`text-xs px-2 py-0.5 rounded-full ${getTypeColor(spot.type)}`}>
+                                        {typeLabels[spot.type]}
+                                      </span>
+                                    )}
                                   </div>
-                                  <Link href={`/spots/${spot.slug}`} className="font-bold text-gray-900 hover:text-blue-600 transition-colors">
-                                    {spot.name_zh}
-                                  </Link>
-                                  <p className="text-xs text-gray-400">{spot.name_ko}</p>
+                                  {spot ? (
+                                    <>
+                                      <Link href={`/spots/${spot.slug}`} className="font-bold text-gray-900 hover:text-blue-600 transition-colors">
+                                        {spot.name_zh}
+                                      </Link>
+                                      <p className="text-xs text-gray-400">{spot.name_ko}</p>
+                                    </>
+                                  ) : (
+                                    <p className="font-bold text-gray-900">{item.note}</p>
+                                  )}
                                 </div>
                               </div>
-                              <p className="text-sm text-gray-600 line-clamp-2 mt-1">{spot.description}</p>
+                              {spot && <p className="text-sm text-gray-600 line-clamp-2 mt-1">{spot.description}</p>}
                               <div className="flex flex-wrap items-center gap-3 mt-3">
                                 <span className="text-xs text-gray-400">⏱ 約 {minutesToHoursText(item.duration)}</span>
-                                {spot.ticket_price_free ? (
+                                {spot?.ticket_price_free ? (
                                   <span className="text-xs text-green-600 font-medium">免費</span>
-                                ) : spot.ticket_price_krw ? (
+                                ) : spot?.ticket_price_krw ? (
                                   <span className="text-xs text-green-600 font-medium">{formatKRW(spot.ticket_price_krw)}</span>
-                                ) : spot.avg_price_krw ? (
+                                ) : spot?.avg_price_krw ? (
                                   <span className="text-xs text-green-600 font-medium">約 {formatKRW(spot.avg_price_krw)}/人</span>
                                 ) : null}
                               </div>
-                              {item.note && (
+                              {spot && item.note && (
                                 <div className="mt-2 text-xs text-amber-700 bg-amber-50 rounded-lg px-3 py-2">
                                   💡 {item.note}
                                 </div>
@@ -137,7 +146,7 @@ export default async function ItineraryDetailPage({ params }: { params: Promise<
                             </div>
                           </div>
                           {/* Recommended dishes preview */}
-                          {spot.recommended_dishes && spot.recommended_dishes.length > 0 && (
+                          {spot?.recommended_dishes && spot.recommended_dishes.length > 0 && (
                             <div className="border-t border-gray-50 px-4 py-3 bg-orange-50/50 flex gap-2 flex-wrap">
                               {spot.recommended_dishes.filter(d => d.must_order).map(dish => (
                                 <span key={dish.name_zh} className="text-xs bg-orange-100 text-orange-700 rounded-full px-2 py-1">
