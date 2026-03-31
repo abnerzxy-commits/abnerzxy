@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Ratelimit } from '@upstash/ratelimit'
-import { Redis } from '@upstash/redis'
 
 // --- Rate limiter ---
-// Uses Upstash Redis if configured, otherwise falls back to in-memory
-const ratelimit = process.env.UPSTASH_REDIS_REST_URL
-  ? new Ratelimit({
-      redis: Redis.fromEnv(),
-      limiter: Ratelimit.slidingWindow(5, '60 s'),
-    })
-  : null
+// Lazy-init Upstash at runtime only (avoid build-time errors)
+let _ratelimit: import('@upstash/ratelimit').Ratelimit | null | undefined
+
+async function getRatelimit() {
+  if (_ratelimit !== undefined) return _ratelimit
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
+    _ratelimit = null
+    return null
+  }
+  const { Ratelimit } = await import('@upstash/ratelimit')
+  const { Redis } = await import('@upstash/redis')
+  _ratelimit = new Ratelimit({
+    redis: Redis.fromEnv(),
+    limiter: Ratelimit.slidingWindow(5, '60 s'),
+  })
+  return _ratelimit
+}
 
 // In-memory fallback for local dev / when Upstash is not configured
 const memMap = new Map<string, number[]>()
@@ -48,6 +56,7 @@ export async function POST(req: NextRequest) {
   const ip = getClientIp(req)
 
   // Rate limit check (Upstash or in-memory fallback)
+  const ratelimit = await getRatelimit()
   if (ratelimit) {
     const { success } = await ratelimit.limit(ip)
     if (!success) {
