@@ -21,4 +21,5 @@ export const filterTypes = [
   { id: 'dessert', label: '🍰 甜點/小吃' },
   { id: 'attraction', label: '🎡 景點' },
   { id: 'shopping', label: '🛍 購物/票券' },
+  { id: 'ig', label: '📸 IG推薦' },
 ]

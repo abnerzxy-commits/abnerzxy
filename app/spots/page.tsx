@@ -54,7 +54,7 @@ function SpotsContent() {
 
   const filtered = useMemo(() => {
     const list = spots.filter(s => {
-      const matchType = typeFilter === 'all' || s.type === typeFilter
+      const matchType = typeFilter === 'all' || (typeFilter === 'ig' ? s.tags?.includes('IG推薦') : s.type === typeFilter)
       const matchKid = kidFilter === 0 || s.kid_friendly_score >= kidFilter
       const matchQuery = !query || [s.name_zh, s.name_ko, s.description, s.district, ...(s.tags ?? [])].some(
         t => t?.toLowerCase().includes(query.toLowerCase())
