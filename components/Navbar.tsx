@@ -8,6 +8,7 @@ const links = [
   { href: '/', label: '首頁' },
   { href: '/spots', label: '景點餐廳' },
   { href: '/itinerary', label: '行程規劃' },
+  { href: '/our-trip', label: '🎀 我們的行程' },
   { href: '/souvenirs', label: '伴手禮' },
   { href: '/tips', label: '實用資訊' },
 ]
