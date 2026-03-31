@@ -93,7 +93,7 @@ export interface Spot {
 }
 
 export interface TravelFromPrev {
-  mode: 'walk' | 'chartered' | 'uber' | 'capsule'
+  mode: 'walk' | 'chartered' | 'uber' | 'capsule' | 'subway' | 'taxi' | 'bus'
   minutes: number
   note?: string
 }

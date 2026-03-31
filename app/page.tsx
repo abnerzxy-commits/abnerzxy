@@ -34,7 +34,7 @@ export default function HomePage() {
       {/* Hero */}
       <section className="relative bg-gradient-to-br from-sky-800 via-blue-700 to-indigo-800 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-15"
-          style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=1400&q=60)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
+          style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=800&q=75)', backgroundSize: 'cover', backgroundPosition: 'center' }} />
         <div className="relative max-w-5xl mx-auto px-4 py-20 md:py-28 text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-2 text-sm mb-6">
             👶 專為帶 2-6 歲小孩旅遊設計
@@ -222,13 +222,27 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Souvenirs CTA */}
+      <section className="bg-gradient-to-br from-pink-600 to-rose-600 text-white py-12">
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <div className="text-4xl mb-3">🎁</div>
+          <h2 className="text-2xl font-bold mb-2">釜山必買伴手禮攻略</h2>
+          <p className="text-pink-100 mb-6 max-w-md mx-auto">
+            美食名產、美妝保養、文創周邊<br />價格地點一次整理，不怕買錯買貴
+          </p>
+          <Link href="/souvenirs" className="inline-block bg-white text-pink-700 font-bold px-6 py-3 rounded-xl hover:bg-pink-50 transition-colors">
+            查看伴手禮專區 →
+          </Link>
+        </div>
+      </section>
+
       {/* Tips CTA */}
       <section className="bg-gradient-to-br from-amber-600 to-orange-600 text-white py-12">
         <div className="max-w-5xl mx-auto px-4 text-center">
           <div className="text-4xl mb-3">💱</div>
-          <h2 className="text-2xl font-bold mb-2">換韓元、伴手禮、旅遊須知</h2>
+          <h2 className="text-2xl font-bold mb-2">換韓元＆旅遊須知</h2>
           <p className="text-amber-100 mb-6 max-w-md mx-auto">
-            匯率怎麼算？現金帶多少？必買伴手禮？<br />出發前看這頁就夠
+            匯率怎麼算？現金帶多少？<br />出發前看這頁就夠
           </p>
           <Link href="/tips" className="inline-block bg-white text-amber-700 font-bold px-6 py-3 rounded-xl hover:bg-amber-50 transition-colors">
             查看實用資訊 →

@@ -1,4 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
+// --- Rate limiter ---
+// Uses Upstash Redis if configured, otherwise falls back to in-memory
+const ratelimit = process.env.UPSTASH_REDIS_REST_URL
+  ? new Ratelimit({
+      redis: Redis.fromEnv(),
+      limiter: Ratelimit.slidingWindow(5, '60 s'),
+    })
+  : null
+
+// In-memory fallback for local dev / when Upstash is not configured
+const memMap = new Map<string, number[]>()
+
+function isMemRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const recent = (memMap.get(ip) ?? []).filter(t => now - t < 60_000)
+  if (recent.length >= 5) {
+    memMap.set(ip, recent)
+    return true
+  }
+  recent.push(now)
+  memMap.set(ip, recent)
+  if (memMap.size > 500) {
+    for (const [key, ts] of memMap) {
+      if (ts.every(t => now - t >= 60_000)) memMap.delete(key)
+    }
+  }
+  return false
+}
+
+function getClientIp(req: NextRequest): string {
+  return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+    ?? req.headers.get('x-real-ip')
+    ?? 'unknown'
+}
 
 /**
  * POST /api/extract
@@ -8,7 +45,31 @@ import { NextRequest, NextResponse } from 'next/server'
  * from a YouTube travel video about Korea.
  */
 export async function POST(req: NextRequest) {
-  const { youtube_url } = await req.json()
+  const ip = getClientIp(req)
+
+  // Rate limit check (Upstash or in-memory fallback)
+  if (ratelimit) {
+    const { success } = await ratelimit.limit(ip)
+    if (!success) {
+      return NextResponse.json(
+        { error: '請求過於頻繁，請稍後再試（每分鐘最多 5 次）' },
+        { status: 429 }
+      )
+    }
+  } else if (isMemRateLimited(ip)) {
+    return NextResponse.json(
+      { error: '請求過於頻繁，請稍後再試（每分鐘最多 5 次）' },
+      { status: 429 }
+    )
+  }
+
+  let body: { youtube_url?: string }
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: '無效的請求格式' }, { status: 400 })
+  }
+  const { youtube_url } = body
 
   if (!youtube_url) {
     return NextResponse.json({ error: 'youtube_url required' }, { status: 400 })
@@ -143,7 +204,7 @@ ${rawContent}
     })
   } catch (err) {
     console.error('Extraction error:', err)
-    return NextResponse.json({ error: 'Extraction failed', details: String(err) }, { status: 500 })
+    return NextResponse.json({ error: '萃取失敗，請稍後再試' }, { status: 500 })
   }
 }
 

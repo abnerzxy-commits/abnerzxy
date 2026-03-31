@@ -40,72 +40,6 @@ const rateTable = [
   { amount: '₩100,000', approx: '≈ NT$2,500' },
 ]
 
-const souvenirs = [
-  {
-    emoji: '🍫',
-    name: '釜山魚糕（어묵）',
-    where: '三進魚糕（BIFF 廣場店）、影島橋旁魚糕體驗館',
-    price: '₩10,000～25,000',
-    note: '釜山代表名產！真空包裝可帶回，種類超多。三進魚糕有禮盒裝，送禮體面。',
-    kid: true,
-  },
-  {
-    emoji: '🥜',
-    name: '海雲台花生麵包（땅콩빵）',
-    where: '海雲台花生麵包專賣店',
-    price: '40 個 ₩5,000',
-    note: '花生形狀超可愛！酥脆外層＋香軟內餡，一袋 40 個很適合分送。海雲台必買。',
-    kid: true,
-  },
-  {
-    emoji: '🍪',
-    name: 'B&C 奶油餅乾',
-    where: '南浦洞 BIFF 廣場附近',
-    price: '₩12,000～18,000',
-    note: '釜山超人氣手工奶油餅乾，包裝精美適合送禮。口味有原味、巧克力、抹茶等。常常排隊。',
-    kid: true,
-  },
-  {
-    emoji: '🫖',
-    name: '韓國柚子茶 / 紅棗茶',
-    where: '超市（E-mart、Homeplus）、南浦洞',
-    price: '₩5,000～12,000',
-    note: '罐裝果醬式，回台灣沖熱水就能喝。柚子茶最經典，蜂蜜口味小孩也愛。帶一罐自用超划算。',
-    kid: true,
-  },
-  {
-    emoji: '🧴',
-    name: '韓國美妝保養品',
-    where: 'Olive Young（全釜山都有）、新世界百貨',
-    price: '₩3,000～30,000',
-    note: '面膜、護手霜、防曬是最熱門伴手禮。Olive Young 常有買 2 送 1 活動。Dr.G / Torriden / Anua 是 2025 熱門品牌。',
-    kid: false,
-  },
-  {
-    emoji: '🍭',
-    name: '韓國零食大禮包',
-    where: '超市（E-mart、Homeplus）、便利商店',
-    price: '₩10,000～20,000',
-    note: '蜂蜜奶油洋芋片、Market O 巧克力布朗尼、Pepero、養樂多軟糖都是經典。超市價格比觀光區便宜一半。',
-    kid: true,
-  },
-  {
-    emoji: '🧸',
-    name: 'Kakao Friends / BT21 周邊',
-    where: 'Kakao Friends Store（南浦洞、西面）、新世界百貨',
-    price: '₩5,000～30,000',
-    note: 'Ryan、Apeach 等角色超可愛，玩偶、文具、杯子都有。小孩看到會瘋掉，大人也淪陷。',
-    kid: true,
-  },
-  {
-    emoji: '🌶',
-    name: '韓國海苔 / 拌飯醬',
-    where: '超市（E-mart、Homeplus）',
-    price: '₩3,000～8,000',
-    note: '韓國海苔比台灣便宜很多，大包裝送人自用都合適。拌飯醬（CJ bibigo）一罐搞定韓式料理。',
-    kid: true,
-  },
-]
 
 const travelTips = [
   { icon: '🛂', title: '入境準備', items: [
@@ -158,7 +92,7 @@ export default function TipsPage() {
       {/* Quick nav */}
       <div className="flex flex-wrap gap-3 mb-12">
         <a href="#exchange" className="bg-amber-50 text-amber-700 border border-amber-200 px-4 py-2 rounded-full text-sm font-medium hover:bg-amber-100 transition-colors">💱 換韓元</a>
-        <a href="#souvenirs" className="bg-pink-50 text-pink-700 border border-pink-200 px-4 py-2 rounded-full text-sm font-medium hover:bg-pink-100 transition-colors">🎁 伴手禮</a>
+        <Link href="/souvenirs" className="bg-pink-50 text-pink-700 border border-pink-200 px-4 py-2 rounded-full text-sm font-medium hover:bg-pink-100 transition-colors">🎁 伴手禮專區 →</Link>
         <a href="#tips" className="bg-blue-50 text-blue-700 border border-blue-200 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors">📋 旅遊須知</a>
       </div>
 
@@ -227,44 +161,17 @@ export default function TipsPage() {
         </div>
       </section>
 
-      {/* ═══ Souvenirs ═══ */}
-      <section id="souvenirs" className="mb-16 scroll-mt-24">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">🎁 釜山伴手禮推薦</h2>
-        <p className="text-gray-500 mb-8">自用送人都合適，附價格和購買地點</p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {souvenirs.map(item => (
-            <div key={item.name} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-              <div className="flex items-start gap-3 mb-3">
-                <span className="text-3xl">{item.emoji}</span>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-gray-900">{item.name}</h3>
-                    {item.kid && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">小孩也愛</span>}
-                  </div>
-                  <div className="text-sm text-blue-600 font-medium mt-0.5">{item.price}</div>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 leading-relaxed mb-2">{item.note}</p>
-              <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                <span>📍</span>
-                <span>{item.where}</span>
-              </div>
+      {/* ═══ Souvenirs CTA ═══ */}
+      <section className="mb-16">
+        <Link href="/souvenirs" className="block bg-gradient-to-r from-pink-50 to-orange-50 border border-pink-200 rounded-2xl p-6 hover:shadow-md transition-shadow group">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">🎁 伴手禮專區</h2>
+              <p className="text-gray-500 text-sm">美食、美妝、文創周邊完整攻略，含價格和購買地點</p>
             </div>
-          ))}
-        </div>
-
-        {/* Shopping tips */}
-        <div className="mt-8 bg-pink-50 border border-pink-200 rounded-2xl p-6">
-          <h3 className="font-bold text-pink-800 text-lg mb-3">🛒 採買小撇步</h3>
-          <ul className="space-y-2 text-sm text-pink-700">
-            <li className="flex gap-2"><span>•</span><span>超市（E-mart、Homeplus）價格最便宜，觀光區貴 30～50%</span></li>
-            <li className="flex gap-2"><span>•</span><span>新世界百貨 B1 外國旅客服務台可領折扣券（護照必備）</span></li>
-            <li className="flex gap-2"><span>•</span><span>Olive Young 結帳時出示護照可退稅（滿 ₩30,000）</span></li>
-            <li className="flex gap-2"><span>•</span><span>最後一天再大量採買，避免整趟行程都在扛東西</span></li>
-            <li className="flex gap-2"><span>•</span><span>液體類（柚子茶、醬料）放託運行李，勿手提</span></li>
-          </ul>
-        </div>
+            <span className="text-pink-600 font-medium text-sm group-hover:translate-x-1 transition-transform">查看完整攻略 →</span>
+          </div>
+        </Link>
       </section>
 
       {/* ═══ Travel tips ═══ */}

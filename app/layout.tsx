@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Noto_Sans_TC } from 'next/font/google'
+import Script from 'next/script'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import AddToHomeScreen from '@/components/AddToHomeScreen'
@@ -11,15 +12,27 @@ const notoSansTC = Noto_Sans_TC({
   variable: '--font-noto-sans-tc',
 })
 
+const SITE_URL = 'https://korea-travel.vercel.app'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: '帶娃衝釜山 | 釜山親子旅遊攻略・景點餐廳行程一站搞定',
   description: '帶娃衝釜山聚合YouTube、IG網紅推薦，精選釜山親子景點、無辣餐廳、公園遊樂場，提供菜單翻譯、點餐韓文、訂位連結與6天行程規劃。',
   keywords: '釜山親子旅遊, 釜山景點, 釜山餐廳, 帶小孩去釜山, 釜山無辣餐廳, 海雲台親子, 釜山行程規劃, 韓國親子遊',
+  alternates: {
+    canonical: SITE_URL,
+  },
   openGraph: {
     title: '帶娃衝釜山 | 釜山親子旅遊攻略',
     description: '精選釜山親子景點・無辣餐廳・公園遊樂場，含訂位連結與6天行程規劃',
     locale: 'zh_TW',
     type: 'website',
+    url: SITE_URL,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '帶娃衝釜山 | 釜山親子旅遊攻略',
+    description: '精選釜山親子景點・無辣餐廳・公園遊樂場，含訂位連結與6天行程規劃',
   },
 }
 
@@ -31,10 +44,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="帶娃衝釜山" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-2JFTSLLGJ5" />
-        <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-2JFTSLLGJ5")` }} />
       </head>
       <body className={`min-h-full flex flex-col bg-gray-50 ${notoSansTC.className}`}>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-2JFTSLLGJ5"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("config","G-2JFTSLLGJ5")`}
+        </Script>
+        <Script id="sw-register" strategy="afterInteractive">
+          {`if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}`}
+        </Script>
         <Navbar />
         <main className="flex-1">{children}</main>
         <AddToHomeScreen />

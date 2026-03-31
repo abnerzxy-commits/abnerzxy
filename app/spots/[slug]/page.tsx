@@ -18,6 +18,85 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${spot.name_zh}（${spot.name_ko}）| 釜山親子旅遊`,
     description: spot.description,
+    openGraph: {
+      title: `${spot.name_zh}（${spot.name_ko}）| 帶娃衝釜山`,
+      description: spot.description,
+      images: [spot.image_url],
+      locale: 'zh_TW',
+      type: 'article',
+    },
+  }
+}
+
+function generateJsonLd(spot: typeof spots[number]) {
+  const BASE_URL = 'https://korea-travel.vercel.app'
+
+  if (spot.type === 'restaurant' || spot.type === 'cafe' || spot.type === 'dessert') {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Restaurant',
+      name: spot.name_zh,
+      alternateName: spot.name_ko,
+      description: spot.description,
+      image: spot.image_url,
+      url: `${BASE_URL}/spots/${spot.slug}`,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: spot.address_ko,
+        addressLocality: spot.district,
+        addressRegion: spot.city,
+        addressCountry: 'KR',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: spot.lat,
+        longitude: spot.lng,
+      },
+      ...(spot.rating && {
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: spot.rating,
+          reviewCount: spot.review_count || 0,
+          bestRating: 5,
+        },
+      }),
+      ...(spot.avg_price_krw && {
+        priceRange: spot.price_range === 'budget' ? '₩' : spot.price_range === 'moderate' ? '₩₩' : '₩₩₩',
+      }),
+      ...(spot.cuisine_type && { servesCuisine: spot.cuisine_type }),
+      acceptsReservations: spot.reservation_required ? 'True' : 'False',
+    }
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'TouristAttraction',
+    name: spot.name_zh,
+    alternateName: spot.name_ko,
+    description: spot.description,
+    image: spot.image_url,
+    url: `${BASE_URL}/spots/${spot.slug}`,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: spot.address_ko,
+      addressLocality: spot.district,
+      addressRegion: spot.city,
+      addressCountry: 'KR',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: spot.lat,
+      longitude: spot.lng,
+    },
+    ...(spot.rating && {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: spot.rating,
+        reviewCount: spot.review_count || 0,
+        bestRating: 5,
+      },
+    }),
+    ...(spot.ticket_price_free && { isAccessibleForFree: true }),
   }
 }
 
@@ -80,8 +159,14 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
     ? `約 ${formatKRW(spot.avg_price_krw)} / 人（${formatKRWtoTWD(spot.avg_price_krw)}）`
     : null
 
+  const jsonLd = generateJsonLd(spot)
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Link href="/spots" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 mb-6 transition-colors">
         ← 返回景點列表
       </Link>
