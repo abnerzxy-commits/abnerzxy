@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 interface Props {
   situation: string
@@ -8,12 +8,20 @@ interface Props {
 
 export default function CopyablePhrase({ situation, korean }: Props) {
   const [copied, setCopied] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
 
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(korean)
       setCopied(true)
-      setTimeout(() => setCopied(false), 1500)
+      if (timerRef.current) clearTimeout(timerRef.current)
+      timerRef.current = setTimeout(() => setCopied(false), 1500)
     } catch {
       // Fallback: select text for manual copy
       const el = document.getElementById(`phrase-${korean}`)

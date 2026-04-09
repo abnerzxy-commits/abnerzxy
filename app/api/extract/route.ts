@@ -53,6 +53,13 @@ function getClientIp(req: NextRequest): string {
  * from a YouTube travel video about Korea.
  */
 export async function POST(req: NextRequest) {
+  // CSRF: verify request origin
+  const origin = req.headers.get('origin')
+  const host = req.headers.get('host')
+  if (origin && host && !origin.includes(host)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   const ip = getClientIp(req)
 
   // Rate limit check (Upstash or in-memory fallback)
@@ -80,8 +87,18 @@ export async function POST(req: NextRequest) {
   }
   const { youtube_url } = body
 
-  if (!youtube_url) {
+  if (!youtube_url || typeof youtube_url !== 'string') {
     return NextResponse.json({ error: 'youtube_url required' }, { status: 400 })
+  }
+
+  // Input validation: limit URL length to prevent abuse
+  if (youtube_url.length > 200) {
+    return NextResponse.json({ error: 'URL 太長' }, { status: 400 })
+  }
+
+  // Sanitize: only allow expected URL patterns
+  if (!/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/.test(youtube_url) && !/^[a-zA-Z0-9_-]{11}$/.test(youtube_url)) {
+    return NextResponse.json({ error: '請提供有效的 YouTube 網址' }, { status: 400 })
   }
 
   const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY
@@ -122,8 +139,9 @@ export async function POST(req: NextRequest) {
 
     const rawContent = `影片標題: ${title}\n\n頻道: ${channelTitle}\n觀看次數: ${viewCount}\n\n影片描述:\n${description}\n\n熱門留言:\n${comments}`
 
-    // 4. Send to Claude for extraction
+    // 4. Send to Claude for extraction (30s timeout)
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+      signal: AbortSignal.timeout(30_000),
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -194,27 +212,48 @@ ${rawContent}
     // Parse JSON from Claude response
     const jsonMatch = responseText.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
-      return NextResponse.json({ error: 'Failed to parse AI response', raw: responseText }, { status: 500 })
+      return NextResponse.json({ error: 'Failed to parse AI response', raw: responseText.slice(0, 200) }, { status: 500 })
     }
 
     let extracted
     try {
       extracted = JSON.parse(jsonMatch[0])
     } catch {
-      return NextResponse.json({ error: 'AI 回傳的 JSON 格式無效', raw: responseText }, { status: 500 })
+      return NextResponse.json({ error: 'AI 回傳的 JSON 格式無效', raw: responseText.slice(0, 200) }, { status: 500 })
     }
+
+    // Sanitize output to prevent XSS in downstream rendering
+    const sanitized = deepSanitize(extracted)
 
     return NextResponse.json({
       success: true,
-      data: extracted,
-      video_title: title,
-      channel: channelTitle,
-      view_count: viewCount,
+      data: sanitized,
+      video_title: String(title).slice(0, 500),
+      channel: String(channelTitle).slice(0, 200),
+      view_count: Number(viewCount) || 0,
     })
   } catch (err) {
     console.error('Extraction error:', err)
     return NextResponse.json({ error: '萃取失敗，請稍後再試' }, { status: 500 })
   }
+}
+
+/** Strip HTML tags and dangerous patterns from all string values recursively */
+function deepSanitize(obj: unknown): unknown {
+  if (typeof obj === 'string') {
+    return obj
+      .replace(/<[^>]*>/g, '')                          // strip all HTML tags
+      .replace(/javascript\s*:/gi, '')                   // strip javascript: URIs
+      .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')     // strip inline event handlers
+      .replace(/on\w+\s*=\s*[^\s>]*/gi, '')             // strip unquoted event handlers
+  }
+  if (Array.isArray(obj)) return obj.map(deepSanitize)
+  if (obj && typeof obj === 'object') {
+    const out: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(obj)) out[k] = deepSanitize(v)
+    return out
+  }
+  return obj
 }
 
 function extractVideoId(url: string): string | null {
