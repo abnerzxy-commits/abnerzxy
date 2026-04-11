@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { suggestedItineraries, spots } from '@/lib/data'
+import BreadcrumbSchema from '@/components/BreadcrumbSchema'
 
 export const metadata: Metadata = {
   title: '行程模板 | 帶娃衝釜山',
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 export default function ItineraryListPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
+      <BreadcrumbSchema items={[{ name: '行程規劃', href: '/itinerary' }]} />
       <div className="mb-10 text-center">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">行程模板</h1>
         <p className="text-gray-500 text-lg max-w-xl mx-auto">

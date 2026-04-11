@@ -53,11 +53,18 @@ function getClientIp(req: NextRequest): string {
  * from a YouTube travel video about Korea.
  */
 export async function POST(req: NextRequest) {
-  // CSRF: verify request origin
+  // CSRF: verify request origin matches host exactly
   const origin = req.headers.get('origin')
   const host = req.headers.get('host')
-  if (origin && host && !origin.includes(host)) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (origin && host) {
+    try {
+      const originHost = new URL(origin).host
+      if (originHost !== host) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      }
+    } catch {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
   }
 
   const ip = getClientIp(req)

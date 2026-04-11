@@ -29,7 +29,8 @@ export default function NaverMap({ lat, lng, name, address }: NaverMapProps) {
         {/* Primary: open app navigation */}
         <a
           href={appNavLink}
-          className="flex items-center gap-3 w-full bg-green-600 hover:bg-green-700 text-white rounded-xl px-4 py-3 transition-colors"
+          className="flex items-center gap-3 w-full bg-green-600 hover:bg-green-700 text-white rounded-xl px-4 py-3 transition-colors shadow-sm hover:shadow-md"
+          aria-label={`用 Naver Map App 導航到 ${name}`}
         >
           <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -44,6 +45,7 @@ export default function NaverMap({ lat, lng, name, address }: NaverMapProps) {
         <a
           href={appPlaceLink}
           className="flex items-center gap-3 w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 rounded-xl px-4 py-3 transition-colors"
+          aria-label={`在 Naver Map App 查看 ${name}`}
         >
           <svg className="w-5 h-5 shrink-0 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />

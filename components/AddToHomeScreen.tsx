@@ -71,7 +71,7 @@ export default function AddToHomeScreen() {
   if (!show) return null
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-[60] p-4 animate-slide-up">
+    <div className="fixed bottom-0 inset-x-0 z-[60] p-4 animate-slide-up" role="dialog" aria-label="加入主畫面提示">
       <div className="max-w-md mx-auto bg-white rounded-2xl shadow-2xl border border-gray-200 p-5">
         <div className="flex items-start gap-3">
           <div className="text-3xl shrink-0">🇰🇷</div>

@@ -63,18 +63,20 @@ export default function ReservationSection({ links, reservationRequired }: Props
 
       {/* Date picker */}
       <div className="mb-4 bg-blue-50 border border-blue-100 rounded-2xl p-4">
-        <label className="block text-sm font-semibold text-blue-800 mb-2">
+        <label htmlFor="reservation-date" className="block text-sm font-semibold text-blue-800 mb-2">
           📅 選擇用餐 / 遊覽日期（可選）
         </label>
         <input
+          id="reservation-date"
           type="date"
           min={today}
           value={selectedDate}
           onChange={e => setSelectedDate(e.target.value)}
-          className="w-full sm:w-auto border border-blue-200 rounded-xl px-4 py-2 text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+          className="w-full sm:w-auto border border-blue-200 rounded-xl px-4 py-2.5 text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-sm transition-shadow hover:shadow-sm"
+          aria-describedby={selectedDate ? 'date-hint' : undefined}
         />
         {selectedDate && (
-          <p className="mt-2 text-xs text-blue-600">
+          <p id="date-hint" className="mt-2 text-xs text-blue-600">
             點擊下方連結將自動帶入 {selectedDate.replace(/-/g, '/')} 的可用時段
           </p>
         )}

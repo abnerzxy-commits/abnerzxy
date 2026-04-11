@@ -18,8 +18,10 @@ export const spiceLevelLabels: Record<string, string> = {
 export const filterTypes = [
   { id: 'all', label: '全部' },
   { id: 'restaurant', label: '🍽 餐廳' },
+  { id: 'cafe', label: '☕ 咖啡廳' },
   { id: 'dessert', label: '🍰 甜點/小吃' },
   { id: 'attraction', label: '🎡 景點' },
+  { id: 'park', label: '🌳 公園' },
   { id: 'shopping', label: '🛍 購物/票券' },
   { id: 'ig', label: '📸 IG推薦' },
 ]

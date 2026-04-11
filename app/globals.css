@@ -12,17 +12,38 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-noto-sans-tc), 'Apple SD Gothic Neo', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth scroll for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Better focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip to content for screen readers */
+.sr-only:focus {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 1rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background: #fff;
+  z-index: 100;
 }
 
 @keyframes fade-in {
@@ -37,6 +58,23 @@ body {
 }
 .animate-slide-up { animation: slide-up 0.4s ease both; }
 
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -49,4 +87,44 @@ body {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 640px) {
+  button, a {
+    min-height: 44px;
+  }
+}
+
+/* Safe area for notched devices (iPhone X+) */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Selection color */
+::selection {
+  background: #bfdbfe;
+  color: #1e3a5f;
+}
+
+/* Subtle entrance animation for cards */
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-card-enter { animation: card-enter 0.4s ease-out both; }
+
+/* Subtle bounce for interactive feedback */
+@keyframes tap-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+}
+.active\:animate-tap:active { animation: tap-bounce 0.15s ease; }
+
+/* Scrollbar styling for desktop */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 }

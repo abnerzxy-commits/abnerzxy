@@ -1,3 +1,9 @@
+/**
+ * NOTE: This component is currently unused.
+ * The project uses NaverMap instead.
+ * If re-enabling, ensure NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is
+ * properly restricted in the Google Cloud Console to prevent abuse.
+ */
 'use client'
 
 interface GoogleMapProps {
@@ -10,6 +16,7 @@ interface GoogleMapProps {
 
 export default function GoogleMap({ lat, lng, name, address, zoom = 16 }: GoogleMapProps) {
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+  if (!apiKey) return null
   const q = encodeURIComponent(`${name} ${address}`)
   const embedUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${q}&center=${lat},${lng}&zoom=${zoom}&language=zh-TW`
 

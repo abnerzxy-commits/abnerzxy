@@ -1,4 +1,17 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import BreadcrumbSchema from '@/components/BreadcrumbSchema'
+
+export const metadata: Metadata = {
+  title: '實用資訊 | 帶娃衝釜山',
+  description: '釜山親子旅遊實用資訊：換韓元攻略、天氣穿搭、交通須知、親子實用、安全醫療等，出發前看這頁就夠。',
+  openGraph: {
+    title: '釜山旅遊實用資訊 | 帶娃衝釜山',
+    description: '換匯、天氣、交通、親子須知一次看',
+    locale: 'zh_TW',
+    type: 'article',
+  },
+}
 
 const exchangeMethods = [
   {
@@ -83,10 +96,11 @@ const travelTips = [
 export default function TipsPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
+      <BreadcrumbSchema items={[{ name: '實用資訊', href: '/tips' }]} />
       {/* Page header */}
       <div className="mb-10">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">實用資訊</h1>
-        <p className="text-gray-500">換錢、伴手���、旅遊須知，出發前看這頁就夠</p>
+        <p className="text-gray-500">換錢、伴手禮、旅遊須知，出發前看這頁就夠</p>
       </div>
 
       {/* Quick nav */}

@@ -3,12 +3,13 @@ import Image from 'next/image'
 import { Spot } from '@/lib/types'
 import { cn, formatKRW, getTypeColor, getTypeIcon } from '@/lib/utils'
 import { typeLabels } from '@/lib/data'
+import FavoriteButton from '@/components/FavoriteButton'
 
 function KidScore({ score }: { score: number }) {
   return (
-    <div className="flex items-center gap-1" title={`親子友善度 ${score}/5`}>
+    <div className="flex items-center gap-1" title={`親子友善度 ${score}/5`} aria-label={`親子友善度 ${score} 星，滿分 5 星`}>
       {Array.from({ length: 5 }).map((_, i) => (
-        <span key={i} className={`text-xs ${i < score ? 'opacity-100' : 'opacity-20'}`}>👶</span>
+        <span key={i} className={`text-xs ${i < score ? 'opacity-100' : 'opacity-20'}`} aria-hidden="true">👶</span>
       ))}
     </div>
   )
@@ -24,35 +25,40 @@ export default function SpotCard({ spot, distance }: { spot: Spot; distance?: nu
     : null
 
   return (
-    <Link href={`/spots/${spot.slug}`} className="group block">
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 h-full flex flex-col">
+    <Link href={`/spots/${spot.slug}`} className="group block" aria-label={`${spot.name_zh} - ${spot.district} - ${typeLabels[spot.type]}`}>
+      <article className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 h-full flex flex-col">
         {/* Image */}
         <div className="relative h-44 bg-gray-200 overflow-hidden shrink-0">
           <Image
             src={spot.image_url}
-            alt={spot.name_zh}
+            alt={`${spot.name_zh}的照片`}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            loading="lazy"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <div className="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
             <span className={cn('text-xs font-medium px-2 py-1 rounded-full backdrop-blur-sm', getTypeColor(spot.type))}>
               {getTypeIcon(spot.type)} {typeLabels[spot.type]}
             </span>
           </div>
-          {spot.rating && (
-            <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-semibold text-gray-700">
-              ⭐ {spot.rating}
-            </div>
-          )}
+          <div className="absolute top-3 right-3 flex items-center gap-1.5">
+            {spot.rating && (
+              <div className="bg-white/90 backdrop-blur-sm rounded-full px-2.5 py-1 text-xs font-semibold text-gray-700 shadow-sm">
+                ⭐ {spot.rating}
+              </div>
+            )}
+            <FavoriteButton spotId={spot.id} size="sm" />
+          </div>
           {/* Spice badge */}
           {spot.spice_level === 'none' && (
-            <div className="absolute bottom-3 left-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+            <div className="absolute bottom-3 left-3 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
               無辣 ✅
             </div>
           )}
           {spot.spice_level === 'mild' && (
-            <div className="absolute bottom-3 left-3 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+            <div className="absolute bottom-3 left-3 bg-yellow-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
               微辣可調 ⚠️
             </div>
           )}
@@ -65,7 +71,7 @@ export default function SpotCard({ spot, distance }: { spot: Spot; distance?: nu
               <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
                 {spot.name_zh}
               </h3>
-              <p className="text-xs text-gray-400 mt-0.5 truncate">{spot.name_ko}</p>
+              <p className="text-xs text-gray-400 mt-0.5 truncate" lang="ko">{spot.name_ko}</p>
             </div>
             <span className="text-xs text-blue-600 font-medium shrink-0 bg-blue-50 px-2 py-1 rounded-lg">
               {spot.district}
@@ -95,8 +101,8 @@ export default function SpotCard({ spot, distance }: { spot: Spot; distance?: nu
 
           {/* Distance badge */}
           {distance !== undefined && (
-            <p className="text-xs text-blue-600 font-medium mt-1.5 flex items-center gap-1">
-              <span>📍</span>
+            <p className="text-xs text-blue-600 font-medium mt-2 flex items-center gap-1">
+              <span aria-hidden="true">📍</span>
               <span>{distance < 1 ? `${Math.round(distance * 1000)} m` : `${distance.toFixed(1)} km`} 距離你</span>
             </p>
           )}
@@ -104,12 +110,12 @@ export default function SpotCard({ spot, distance }: { spot: Spot; distance?: nu
           {/* Quick pros preview */}
           {spot.review_summary?.pros?.[0] && (
             <p className="text-xs text-gray-400 mt-2 flex gap-1.5">
-              <span className="text-green-500 shrink-0">✓</span>
+              <span className="text-green-500 shrink-0" aria-hidden="true">✓</span>
               <span className="line-clamp-1">{spot.review_summary.pros[0]}</span>
             </p>
           )}
         </div>
-      </div>
+      </article>
     </Link>
   )
 }

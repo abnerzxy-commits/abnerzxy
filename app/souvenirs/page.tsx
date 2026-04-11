@@ -1,5 +1,18 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
+import BreadcrumbSchema from '@/components/BreadcrumbSchema'
+
+export const metadata: Metadata = {
+  title: '伴手禮專區 | 帶娃衝釜山',
+  description: '釜山必買伴手禮完整攻略：美食名產、美妝保養、文創周邊，含價格、購買地點和實用建議。',
+  openGraph: {
+    title: '釜山必買伴手禮攻略 | 帶娃衝釜山',
+    description: '美食名產、美妝保養、文創周邊，價格地點一次整理',
+    locale: 'zh_TW',
+    type: 'article',
+  },
+}
 
 const categories = [
   { id: 'food', label: '🍫 美食伴手禮', anchor: 'food' },
@@ -297,6 +310,7 @@ const budgetGuide = [
 export default function SouvenirsPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
+      <BreadcrumbSchema items={[{ name: '伴手禮', href: '/souvenirs' }]} />
       {/* Header */}
       <div className="mb-10">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">🎁 伴手禮專區</h1>

@@ -10,7 +10,7 @@ export function formatKRW(amount: number): string {
 }
 
 export function formatKRWtoTWD(krw: number): string {
-  const twd = Math.round(krw * 0.023)
+  const twd = Math.round(krw * 0.025)
   return `約 NT$${twd}`
 }
 

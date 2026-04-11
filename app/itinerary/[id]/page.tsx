@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { suggestedItineraries, spots, typeLabels } from '@/lib/data'
 import { formatKRW, getTypeColor, getTypeIcon, minutesToHoursText } from '@/lib/utils'
+import BreadcrumbSchema from '@/components/BreadcrumbSchema'
 
 export function generateStaticParams() {
   return suggestedItineraries.map(i => ({ id: i.id }))
@@ -30,10 +31,14 @@ export default async function ItineraryDetailPage({ params }: { params: Promise<
   const itin = suggestedItineraries.find(i => i.id === id)
   if (!itin) notFound()
 
-  const allSpots = itin.spotIds.map(sid => spots.find(s => s.id === sid)).filter(Boolean)
+  const allSpots = itin.spotIds.map(sid => spots.find(s => s.id === sid)).filter((s): s is (typeof spots)[number] => s != null)
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
+      <BreadcrumbSchema items={[
+        { name: '行程規劃', href: '/itinerary' },
+        { name: itin.title, href: `/itinerary/${itin.id}` },
+      ]} />
       <Link href="/itinerary" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 mb-6 transition-colors">
         ← 返回行程列表
       </Link>
@@ -191,7 +196,7 @@ export default async function ItineraryDetailPage({ params }: { params: Promise<
       <section className="mt-14">
         <h2 className="text-xl font-bold text-gray-900 mb-6">行程中的所有地點</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {allSpots.map(s => s && (
+          {allSpots.map(s => (
             <Link key={s.id} href={`/spots/${s.slug}`} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-all">
               <div className="relative h-24">
                 <Image src={s.image_url} alt={s.name_zh} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="250px" />

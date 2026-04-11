@@ -6,6 +6,11 @@ import { formatKRW, formatKRWtoTWD, getTypeColor, getTypeIcon, minutesToHoursTex
 import { Dish } from '@/lib/types'
 import NaverMap from '@/components/NaverMap'
 import ReservationSection from '@/components/ReservationSection'
+import CopyablePhrase from '@/components/CopyablePhrase'
+import ShareButtons from '@/components/ShareButtons'
+import FavoriteButton from '@/components/FavoriteButton'
+import BreadcrumbSchema from '@/components/BreadcrumbSchema'
+import SpotQuickActions from '@/components/SpotQuickActions'
 
 export function generateStaticParams() {
   return spots.map(s => ({ slug: s.slug }))
@@ -104,34 +109,34 @@ function KidScoreBadge({ score, notes }: { score: number; notes?: string }) {
   const labels = ['', '不太適合', '需留意', '尚可', '適合', '非常適合！']
   const colors = ['', 'bg-red-100 text-red-700', 'bg-orange-100 text-orange-700', 'bg-yellow-100 text-yellow-700', 'bg-green-100 text-green-700', 'bg-emerald-100 text-emerald-700']
   return (
-    <div className={`rounded-2xl px-4 py-3 ${colors[score]}`}>
-      <div className="flex items-center gap-2 mb-1">
+    <div className={`rounded-2xl px-5 py-4 ${colors[score]}`} role="status" aria-label={`親子友善度 ${score} 星：${labels[score]}`}>
+      <div className="flex items-center gap-2 mb-1 flex-wrap">
         <span className="font-bold text-sm">👶 2-6歲親子友善度：{labels[score]}</span>
-        <div className="flex">
+        <div className="flex" aria-hidden="true">
           {Array.from({ length: 5 }).map((_, i) => (
             <span key={i} className={`text-sm ${i < score ? '' : 'opacity-20'}`}>⭐</span>
           ))}
         </div>
       </div>
-      {notes && <p className="text-xs leading-relaxed">{notes}</p>}
+      {notes && <p className="text-xs leading-relaxed mt-1">{notes}</p>}
     </div>
   )
 }
 
 function DishCard({ dish }: { dish: Dish }) {
   return (
-    <div className={`bg-white rounded-2xl border p-4 flex gap-4 ${dish.must_order ? 'border-orange-200 bg-orange-50/30' : 'border-gray-100'}`}>
+    <div className={`bg-white rounded-2xl border p-4 flex gap-4 hover:shadow-sm transition-shadow ${dish.must_order ? 'border-orange-200 bg-orange-50/30 ring-1 ring-orange-100' : 'border-gray-100'}`}>
       {dish.image_url && (
         <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0">
-          <Image src={dish.image_url} alt={dish.name_zh} fill className="object-cover" sizes="80px" />
+          <Image src={dish.image_url} alt={`${dish.name_zh}的照片`} fill className="object-cover" sizes="80px" loading="lazy" />
         </div>
       )}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-semibold text-gray-900">{dish.name_zh}</span>
-          {dish.must_order && <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">必點</span>}
+          {dish.must_order && <span className="text-xs bg-orange-500 text-white px-2.5 py-0.5 rounded-full font-medium shadow-sm">必點</span>}
         </div>
-        <p className="text-xs text-gray-400 mt-0.5">{dish.name_ko}</p>
+        <p className="text-xs text-gray-400 mt-0.5" lang="ko">{dish.name_ko}</p>
         <p className="text-sm text-gray-600 mt-1 leading-relaxed">{dish.description}</p>
         <div className="flex items-center gap-3 mt-2">
           <span className="text-sm font-bold text-green-700">{formatKRW(dish.price_krw)}</span>
@@ -163,9 +168,13 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
+      <BreadcrumbSchema items={[
+        { name: '景點餐廳', href: '/spots' },
+        { name: spot.name_zh, href: `/spots/${spot.slug}` },
+      ]} />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
       <Link href="/spots" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 mb-6 transition-colors">
         ← 返回景點列表
@@ -175,6 +184,10 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
       <div className="relative h-72 md:h-96 rounded-3xl overflow-hidden bg-gray-200 mb-8">
         <Image src={spot.image_url} alt={spot.name_zh} fill className="object-cover" priority sizes="(max-width: 1024px) 100vw, 896px" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        {/* Favorite button overlay */}
+        <div className="absolute top-4 right-4">
+          <FavoriteButton spotId={spot.id} size="md" />
+        </div>
         <div className="absolute bottom-6 left-6 right-6">
           <div className="flex items-end justify-between">
             <div>
@@ -191,6 +204,52 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Mobile Quick Info Strip — key info visible immediately on mobile */}
+      <div className="lg:hidden bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+        <div className="space-y-3">
+          {priceDisplay && (
+            <div className="flex items-center gap-3">
+              <span className="text-lg shrink-0">💰</span>
+              <div>
+                <p className="text-xs text-gray-400">票價 / 消費</p>
+                <p className="text-sm font-semibold text-green-700">{priceDisplay}</p>
+              </div>
+            </div>
+          )}
+          <div className="flex items-center gap-3">
+            <span className="text-lg shrink-0">📍</span>
+            <div className="min-w-0">
+              <p className="text-xs text-gray-400">地址</p>
+              <p className="text-sm font-semibold text-gray-900">{spot.address_zh}</p>
+              <p className="text-xs text-gray-400 mt-0.5 truncate">{spot.address_ko}</p>
+            </div>
+          </div>
+          {spot.opening_hours?.note && (
+            <div className="flex items-center gap-3">
+              <span className="text-lg shrink-0">🕐</span>
+              <p className="text-sm text-orange-600 font-medium">{spot.opening_hours.note}</p>
+            </div>
+          )}
+          {spot.time_needed_minutes ? (
+            <div className="flex items-center gap-3">
+              <span className="text-lg shrink-0">⏱</span>
+              <div>
+                <p className="text-xs text-gray-400">建議停留</p>
+                <p className="text-sm font-semibold">{minutesToHoursText(spot.time_needed_minutes)}</p>
+              </div>
+            </div>
+          ) : null}
+          {(spot.has_english_menu || spot.accepts_card || spot.reservation_required !== undefined) && (
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
+              {spot.has_english_menu && <span className="text-xs bg-green-50 text-green-700 border border-green-100 px-2.5 py-1 rounded-full font-medium">英文菜單</span>}
+              {spot.accepts_card && <span className="text-xs bg-blue-50 text-blue-700 border border-blue-100 px-2.5 py-1 rounded-full font-medium">可刷卡</span>}
+              {spot.reservation_required === false && <span className="text-xs bg-gray-50 text-gray-600 border border-gray-100 px-2.5 py-1 rounded-full font-medium">不需訂位</span>}
+              {spot.reservation_required && <span className="text-xs bg-red-50 text-red-700 border border-red-100 px-2.5 py-1 rounded-full font-medium">建議訂位</span>}
+            </div>
+          )}
         </div>
       </div>
 
@@ -218,8 +277,8 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
 
           {/* Pros & Cons */}
           {spot.review_summary && (
-            <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">📝 網友評價總結</h2>
+            <section aria-labelledby="review-heading">
+              <h2 id="review-heading" className="text-xl font-bold text-gray-900 mb-4">📝 網友評價總結</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-green-50 border border-green-100 rounded-2xl p-4">
                   <h3 className="font-bold text-green-800 mb-3 flex items-center gap-2">
@@ -261,8 +320,8 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
 
           {/* Recommended Dishes */}
           {spot.recommended_dishes && spot.recommended_dishes.length > 0 && (
-            <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">🍽 推薦必點菜單</h2>
+            <section aria-labelledby="dishes-heading">
+              <h2 id="dishes-heading" className="text-xl font-bold text-gray-900 mb-4">🍽 推薦必點菜單</h2>
               <div className="space-y-3">
                 {spot.recommended_dishes.map((dish, i) => <DishCard key={i} dish={dish} />)}
               </div>
@@ -286,21 +345,12 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
 
           {/* Staff Phrases */}
           {spot.staff_phrases && spot.staff_phrases.length > 0 && (
-            <section>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">👆 指給店員看</h2>
+            <section aria-labelledby="staff-phrases-heading">
+              <h2 id="staff-phrases-heading" className="text-xl font-bold text-gray-900 mb-2">👆 指給店員看</h2>
               <p className="text-sm text-gray-400 mb-4">點選句子可複製，或直接拿手機給店員看</p>
               <div className="space-y-3">
                 {spot.staff_phrases.map((phrase, i) => (
-                  <div key={i} className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden">
-                    <div className="px-4 py-2 bg-gray-100 border-b border-gray-200">
-                      <p className="text-xs text-gray-500 font-medium">{phrase.situation}</p>
-                    </div>
-                    <div className="px-4 py-4">
-                      <p className="text-3xl font-bold text-gray-900 leading-tight tracking-wide select-all">
-                        {phrase.korean}
-                      </p>
-                    </div>
-                  </div>
+                  <CopyablePhrase key={i} situation={phrase.situation} korean={phrase.korean} />
                 ))}
               </div>
             </section>
@@ -412,7 +462,7 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
           )}
 
           {/* Naver Map */}
-          <div>
+          <div data-section="map">
             <h3 className="font-bold text-gray-900 mb-3">🗺 地圖 / 導航</h3>
             <NaverMap lat={spot.lat} lng={spot.lng} name={spot.name_ko} address={spot.address_ko} />
           </div>
@@ -429,8 +479,24 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
               </div>
             </div>
           )}
+
+          {/* Share Buttons */}
+          <ShareButtons
+            title={`${spot.name_zh}（${spot.name_ko}）| 帶娃衝釜山`}
+            description={spot.description}
+            url={`https://korea-travel.vercel.app/spots/${spot.slug}`}
+          />
         </div>
       </div>
+
+      {/* Mobile Quick Actions Bar */}
+      <SpotQuickActions
+        nameKo={spot.name_ko}
+        lat={spot.lat}
+        lng={spot.lng}
+        hasReservation={!!spot.reservation_links?.length}
+        firstReservationUrl={spot.reservation_links?.[0]?.url}
+      />
 
       {/* Related Spots */}
       {relatedSpots.length > 0 && (

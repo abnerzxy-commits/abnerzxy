@@ -1,4 +1,5 @@
-const CACHE_NAME = 'korea-travel-v1'
+const CACHE_NAME = 'korea-travel-v3'
+const MAX_CACHE_ITEMS = 200
 const STATIC_ASSETS = [
   '/',
   '/spots',
@@ -9,9 +10,20 @@ const STATIC_ASSETS = [
   '/icon-512.png',
 ]
 
+/** Trim cache to max items (LRU-style: delete oldest entries first) */
+async function trimCache(cacheName, maxItems) {
+  const cache = await caches.open(cacheName)
+  const keys = await cache.keys()
+  if (keys.length > maxItems) {
+    await Promise.all(keys.slice(0, keys.length - maxItems).map(k => cache.delete(k)))
+  }
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(STATIC_ASSETS))
+      .catch((err) => console.warn('SW install cache failed:', err))
   )
   self.skipWaiting()
 })
@@ -29,11 +41,33 @@ self.addEventListener('fetch', (event) => {
   const { request } = event
   const url = new URL(request.url)
 
-  // Skip non-GET and API requests
-  if (request.method !== 'GET' || url.pathname.startsWith('/api/')) return
+  // Skip non-GET, API requests, and Chrome extensions
+  if (request.method !== 'GET') return
+  if (url.pathname.startsWith('/api/')) return
+  if (url.protocol === 'chrome-extension:') return
+  if (url.origin !== self.location.origin && !url.hostname.includes('unsplash') && !url.hostname.includes('pstatic')) return
 
-  // Images: cache-first
+  // Images: cache-first for better performance
   if (url.pathname.startsWith('/images/') || url.pathname.startsWith('/_next/image')) {
+    event.respondWith(
+      caches.match(request).then((cached) =>
+        cached || fetch(request).then((response) => {
+          if (response.ok && response.status === 200) {
+            const clone = response.clone()
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, clone)
+              trimCache(CACHE_NAME, MAX_CACHE_ITEMS)
+            })
+          }
+          return response
+        }).catch(() => cached || new Response('', { status: 404 }))
+      )
+    )
+    return
+  }
+
+  // Static assets (fonts, JS, CSS): cache-first
+  if (url.pathname.startsWith('/_next/static/')) {
     event.respondWith(
       caches.match(request).then((cached) =>
         cached || fetch(request).then((response) => {
@@ -42,26 +76,22 @@ self.addEventListener('fetch', (event) => {
             caches.open(CACHE_NAME).then((cache) => cache.put(request, clone))
           }
           return response
-        })
+        }).catch(() => cached || new Response('', { status: 404 }))
       )
     )
     return
   }
 
-  // Pages & static assets: stale-while-revalidate
+  // Pages: network-first with cache fallback for better freshness
   event.respondWith(
-    caches.match(request).then((cached) => {
-      const fetchPromise = fetch(request)
-        .then((response) => {
-          if (response.ok) {
-            const clone = response.clone()
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone))
-          }
-          return response
-        })
-        .catch(() => cached)
-
-      return cached || fetchPromise
-    })
+    fetch(request)
+      .then((response) => {
+        if (response.ok) {
+          const clone = response.clone()
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone))
+        }
+        return response
+      })
+      .catch(() => caches.match(request).then((cached) => cached || caches.match('/')))
   )
 })
