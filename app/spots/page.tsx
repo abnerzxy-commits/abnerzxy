@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { spots, filterTypes } from '@/lib/data'
 import SpotCard from '@/components/SpotCard'
 import { useFavorites } from '@/components/useFavorites'
+import { haversineDistance } from '@/lib/utils'
 import BreadcrumbSchema from '@/components/BreadcrumbSchema'
 
 const SpotsMapView = dynamic(() => import('@/components/SpotsMapView'), {
@@ -25,14 +26,6 @@ const kidScoreOptions = [
   { value: 4, label: '👶 親子適合（4星以上）' },
   { value: 5, label: '👶👶 超級親子（5星）' },
 ]
-
-function haversine(lat1: number, lng1: number, lat2: number, lng2: number): number {
-  const R = 6371
-  const dLat = (lat2 - lat1) * Math.PI / 180
-  const dLng = (lng2 - lng1) * Math.PI / 180
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-}
 
 function SpotsContent() {
   const searchParams = useSearchParams()
@@ -96,7 +89,7 @@ function SpotsContent() {
 
     if (sortByDist && userPos) {
       return list
-        .map(s => ({ spot: s, dist: haversine(userPos.lat, userPos.lng, s.lat, s.lng) }))
+        .map(s => ({ spot: s, dist: haversineDistance(userPos.lat, userPos.lng, s.lat, s.lng) }))
         .sort((a, b) => a.dist - b.dist)
     }
     return list.map(s => ({ spot: s, dist: undefined }))
@@ -213,7 +206,7 @@ function SpotsContent() {
       <div
         id="filter-panel"
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          showFilters ? 'max-h-[500px] opacity-100 mb-5' : 'max-h-0 opacity-0 md:max-h-none md:opacity-100 md:mb-5'
+          showFilters ? 'max-h-[800px] opacity-100 mb-5' : 'max-h-0 opacity-0 md:max-h-none md:opacity-100 md:mb-5'
         }`}
       >
         {/* Type filters */}
@@ -351,8 +344,14 @@ function SpotsContent() {
         <SpotsMapView spots={filtered} />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map(({ spot, dist }) => (
-            <SpotCard key={spot.id} spot={spot} distance={dist} />
+          {filtered.map(({ spot, dist }, i) => (
+            <div
+              key={spot.id}
+              className={i < 12 ? 'animate-card-enter' : ''}
+              style={i < 12 ? { animationDelay: `${i * 50}ms` } : undefined}
+            >
+              <SpotCard spot={spot} distance={dist} />
+            </div>
           ))}
         </div>
       )}

@@ -36,8 +36,8 @@ export default function ReservationSection({ links, reservationRequired }: Props
   const today = new Date().toISOString().split('T')[0]
 
   function buildUrl(link: ReservationLink): string {
+    if (!link.url.startsWith('https://')) return '#'
     if (!selectedDate) return link.url
-    // Append date param for platforms that support it
     const base = link.url
     if (link.platform === 'Catch Table') {
       return `${base}&date=${selectedDate}`

@@ -35,8 +35,9 @@ export default function CopyablePhrase({ situation, korean }: Props) {
   }
 
   return (
-    <div
-      className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition-all active:scale-[0.99]"
+    <button
+      type="button"
+      className="bg-gray-50 border border-gray-200 rounded-2xl overflow-hidden cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition-all active:scale-[0.99] w-full text-left"
       onClick={handleCopy}
     >
       <div className="px-4 py-2 bg-gray-100 border-b border-gray-200 flex items-center justify-between">
@@ -50,6 +51,6 @@ export default function CopyablePhrase({ situation, korean }: Props) {
           {korean}
         </p>
       </div>
-    </div>
+    </button>
   )
 }

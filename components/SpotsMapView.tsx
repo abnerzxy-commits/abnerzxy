@@ -181,7 +181,7 @@ export default function SpotsMapView({ spots }: SpotsMapViewProps) {
 
       {/* Info popup */}
       {selectedSpot && (
-        <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-white rounded-2xl shadow-lg border border-gray-100 p-4 animate-in slide-in-from-bottom-2">
+        <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-white rounded-2xl shadow-lg border border-gray-100 p-4 animate-fade-in">
           <button
             onClick={() => setSelectedSpot(null)}
             className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors text-sm"

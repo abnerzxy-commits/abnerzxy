@@ -53,18 +53,19 @@ function getClientIp(req: NextRequest): string {
  * from a YouTube travel video about Korea.
  */
 export async function POST(req: NextRequest) {
-  // CSRF: verify request origin matches host exactly
+  // CSRF: reject requests without Origin or with mismatched Origin
   const origin = req.headers.get('origin')
   const host = req.headers.get('host')
-  if (origin && host) {
-    try {
-      const originHost = new URL(origin).host
-      if (originHost !== host) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-      }
-    } catch {
+  if (!origin || !host) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+  try {
+    const originHost = new URL(origin).host
+    if (originHost !== host) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
+  } catch {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   const ip = getClientIp(req)
@@ -126,6 +127,9 @@ export async function POST(req: NextRequest) {
     const ytRes = await fetch(
       `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,statistics&key=${YOUTUBE_API_KEY}`
     )
+    if (!ytRes.ok) {
+      return NextResponse.json({ error: 'YouTube API 錯誤' }, { status: 502 })
+    }
     const ytData = await ytRes.json()
     const video = ytData.items?.[0]
     if (!video) {
@@ -139,6 +143,9 @@ export async function POST(req: NextRequest) {
     const commentsRes = await fetch(
       `https://www.googleapis.com/youtube/v3/commentThreads?videoId=${videoId}&part=snippet&maxResults=20&order=relevance&key=${YOUTUBE_API_KEY}`
     )
+    if (!commentsRes.ok) {
+      return NextResponse.json({ error: 'YouTube 留言 API 錯誤' }, { status: 502 })
+    }
     const commentsData = await commentsRes.json()
     const comments = (commentsData.items ?? [])
       .map((c: { snippet: { topLevelComment: { snippet: { textDisplay: string } } } }) => c.snippet.topLevelComment.snippet.textDisplay)
@@ -213,6 +220,9 @@ ${rawContent}
       }),
     })
 
+    if (!claudeRes.ok) {
+      return NextResponse.json({ error: 'AI 分析服務暫時無法使用' }, { status: 502 })
+    }
     const claudeData = await claudeRes.json()
     const responseText = claudeData.content?.[0]?.text ?? ''
 
@@ -251,6 +261,8 @@ function deepSanitize(obj: unknown): unknown {
     return obj
       .replace(/<[^>]*>/g, '')                          // strip all HTML tags
       .replace(/javascript\s*:/gi, '')                   // strip javascript: URIs
+      .replace(/data\s*:[^,]*base64/gi, '')             // strip data: base64 URIs
+      .replace(/vbscript\s*:/gi, '')                     // strip vbscript: URIs
       .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')     // strip inline event handlers
       .replace(/on\w+\s*=\s*[^\s>]*/gi, '')             // strip unquoted event handlers
   }

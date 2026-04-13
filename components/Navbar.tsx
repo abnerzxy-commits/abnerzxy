@@ -98,7 +98,6 @@ export default function Navbar() {
           'md:hidden overflow-hidden transition-all duration-300 ease-in-out',
           open ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'
         )}
-        role="menu"
       >
         <div className="border-t border-gray-100 bg-white px-4 py-3 space-y-1">
           {links.map(l => (
@@ -112,7 +111,6 @@ export default function Navbar() {
                   ? 'text-blue-600 bg-blue-50'
                   : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
               )}
-              role="menuitem"
               aria-current={isActive(l.href) ? 'page' : undefined}
             >
               {l.label}
