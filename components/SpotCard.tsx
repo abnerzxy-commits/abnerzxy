@@ -1,3 +1,5 @@
+'use client'
+import { useState, memo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Spot } from '@/lib/types'
@@ -15,7 +17,8 @@ function KidScore({ score }: { score: number }) {
   )
 }
 
-export default function SpotCard({ spot, distance }: { spot: Spot; distance?: number }) {
+const SpotCard = memo(function SpotCard({ spot, distance }: { spot: Spot; distance?: number }) {
+  const [imgLoaded, setImgLoaded] = useState(false)
   const priceText = spot.ticket_price_free
     ? '免費'
     : spot.ticket_price_krw
@@ -28,14 +31,18 @@ export default function SpotCard({ spot, distance }: { spot: Spot; distance?: nu
     <Link href={`/spots/${spot.slug}`} className="group block" aria-label={`${spot.name_zh} - ${spot.district} - ${typeLabels[spot.type]}`}>
       <article className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 h-full flex flex-col">
         {/* Image */}
-        <div className="relative h-44 bg-gray-200 overflow-hidden shrink-0">
+        <div className={cn('relative h-44 overflow-hidden shrink-0 img-skeleton', imgLoaded && 'loaded')}>
           <Image
             src={spot.image_url}
             alt={`${spot.name_zh}的照片`}
             fill
-            className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+            className={cn(
+              'object-cover group-hover:scale-110 transition-all duration-700 ease-out',
+              imgLoaded ? 'opacity-100' : 'opacity-0'
+            )}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             loading="lazy"
+            onLoad={() => setImgLoaded(true)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           <div className="absolute top-3 left-3 flex items-center gap-1.5 flex-wrap">
@@ -52,16 +59,24 @@ export default function SpotCard({ spot, distance }: { spot: Spot; distance?: nu
             <FavoriteButton spotId={spot.id} size="sm" />
           </div>
           {/* Spice badge */}
-          {spot.spice_level === 'none' && (
-            <div className="absolute bottom-3 left-3 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
-              無辣 ✅
-            </div>
-          )}
-          {spot.spice_level === 'mild' && (
-            <div className="absolute bottom-3 left-3 bg-yellow-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
-              微辣可調 ⚠️
-            </div>
-          )}
+          {/* Bottom-left badges */}
+          <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
+            {spot.spice_level === 'none' && (
+              <span className="bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+                無辣 ✅
+              </span>
+            )}
+            {spot.spice_level === 'mild' && (
+              <span className="bg-yellow-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+                微辣可調 ⚠️
+              </span>
+            )}
+            {spot.tags?.includes('IG推薦') && (
+              <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+                IG推薦
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Content */}
@@ -71,7 +86,7 @@ export default function SpotCard({ spot, distance }: { spot: Spot; distance?: nu
               <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
                 {spot.name_zh}
               </h3>
-              <p className="text-xs text-gray-400 mt-0.5 truncate" lang="ko">{spot.name_ko}</p>
+              <p className="text-xs text-gray-500 mt-0.5 truncate" lang="ko">{spot.name_ko}</p>
             </div>
             <span className="text-xs text-blue-600 font-medium shrink-0 bg-blue-50 px-2 py-1 rounded-lg">
               {spot.district}
@@ -109,7 +124,7 @@ export default function SpotCard({ spot, distance }: { spot: Spot; distance?: nu
 
           {/* Quick pros preview */}
           {spot.review_summary?.pros?.[0] && (
-            <p className="text-xs text-gray-400 mt-2 flex gap-1.5">
+            <p className="text-xs text-gray-500 mt-2 flex gap-1.5">
               <span className="text-green-500 shrink-0" aria-hidden="true">✓</span>
               <span className="line-clamp-1">{spot.review_summary.pros[0]}</span>
             </p>
@@ -118,4 +133,6 @@ export default function SpotCard({ spot, distance }: { spot: Spot; distance?: nu
       </article>
     </Link>
   )
-}
+})
+
+export default SpotCard

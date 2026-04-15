@@ -121,6 +121,66 @@ html {
 }
 .active\:animate-tap:active { animation: tap-bounce 0.15s ease; }
 
+/* Hide scrollbar for horizontal nav */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Animated gradient for hero sections */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* Floating decoration animation */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-12px) rotate(3deg); }
+  66% { transform: translateY(6px) rotate(-2deg); }
+}
+@keyframes float-slow-reverse {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(8px) rotate(-3deg); }
+  66% { transform: translateY(-10px) rotate(2deg); }
+}
+.animate-float-1 { animation: float-slow 6s ease-in-out infinite; }
+.animate-float-2 { animation: float-slow-reverse 7s ease-in-out infinite; }
+.animate-float-3 { animation: float-slow 8s ease-in-out 1s infinite; }
+
+/* CTA button glow pulse */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 4px 15px rgba(250, 204, 21, 0.3); }
+  50% { box-shadow: 0 4px 30px rgba(250, 204, 21, 0.5); }
+}
+.animate-glow { animation: glow-pulse 2.5s ease-in-out infinite; }
+
+/* Image skeleton loading */
+.img-skeleton {
+  position: relative;
+  overflow: hidden;
+}
+.img-skeleton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  z-index: 1;
+}
+.img-skeleton.loaded::before {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 /* Scrollbar styling for desktop */
 @media (min-width: 768px) {
   ::-webkit-scrollbar { width: 8px; height: 8px; }

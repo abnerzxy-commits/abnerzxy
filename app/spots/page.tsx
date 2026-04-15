@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
@@ -31,18 +31,55 @@ function SpotsContent() {
   const searchParams = useSearchParams()
   const initialType = searchParams.get('type') ?? 'all'
   const initialQuery = searchParams.get('q') ?? ''
+  const initialKid = Number(searchParams.get('kid')) || 0
+  const initialFav = searchParams.get('fav') === '1'
+  const initialView = (searchParams.get('view') as 'list' | 'map') || 'list'
 
   const [query, setQuery] = useState(initialQuery)
   const [typeFilter, setTypeFilter] = useState(initialType)
-  const [kidFilter, setKidFilter] = useState(0)
+  const [kidFilter, setKidFilter] = useState(initialKid)
   const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null)
   const [sortByDist, setSortByDist] = useState(false)
   const [gpsLoading, setGpsLoading] = useState(false)
   const [gpsError, setGpsError] = useState('')
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
-  const [showFavOnly, setShowFavOnly] = useState(false)
+  const [viewMode, setViewMode] = useState<'list' | 'map'>(initialView)
+  const [showFavOnly, setShowFavOnly] = useState(initialFav)
   const [showFilters, setShowFilters] = useState(false)
   const { favorites } = useFavorites()
+  const ITEMS_PER_PAGE = 12
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE)
+  const isInitialMount = useRef(true)
+
+  // Sync filter state to URL params (replaceState so browser back restores filters)
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
+    const params = new URLSearchParams()
+    if (query) params.set('q', query)
+    if (typeFilter !== 'all') params.set('type', typeFilter)
+    if (kidFilter > 0) params.set('kid', String(kidFilter))
+    if (showFavOnly) params.set('fav', '1')
+    if (viewMode !== 'list') params.set('view', viewMode)
+    const qs = params.toString()
+    const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname
+    window.history.replaceState(null, '', newUrl)
+  }, [query, typeFilter, kidFilter, showFavOnly, viewMode])
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE)
+  }, [query, typeFilter, kidFilter, showFavOnly, sortByDist])
+
+  // Auto-close filter panel on mobile after filter selection
+  const applyFilterMobile = useCallback((action: () => void) => {
+    action()
+    // Auto-collapse on mobile (md breakpoint = 768px)
+    if (window.innerWidth < 768) {
+      setTimeout(() => setShowFilters(false), 200)
+    }
+  }, [])
 
   // Count active filters for badge display
   const activeFilterCount = useMemo(() => {
@@ -96,80 +133,99 @@ function SpotsContent() {
   }, [query, typeFilter, kidFilter, sortByDist, userPos, showFavOnly, favorites])
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
+    <div>
       <BreadcrumbSchema items={[{ name: '景點餐廳', href: '/spots' }]} />
-      <div className="mb-8 flex items-start justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">釜山景點・餐廳・公園</h1>
-          <p className="text-gray-500 mt-1">共 {filtered.length} 個地點，全部以 2-6 歲小孩為優先考量</p>
-        </div>
-        {/* View mode toggle */}
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl p-1">
-          <button
-            onClick={() => setViewMode('list')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-              viewMode === 'list' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-600 hover:text-blue-600'
-            }`}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-            列表
-          </button>
-          <button
-            onClick={() => setViewMode('map')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-              viewMode === 'map' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-600 hover:text-blue-600'
-            }`}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-            </svg>
-            地圖
-          </button>
-        </div>
-      </div>
 
-      {/* Search + Filter toggle row */}
-      <div className="flex gap-2 mb-4">
-        <div className="relative flex-1">
-          <label htmlFor="spot-search" className="sr-only">搜尋景點、餐廳、公園</label>
-          <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <input
-            id="spot-search"
-            type="search"
-            placeholder="搜尋景點、餐廳、公園、無辣..."
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-shadow hover:shadow-md"
-            autoComplete="off"
-          />
+      {/* Mini hero header */}
+      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden">
+        <div className="absolute inset-0 opacity-10" aria-hidden="true">
+          <div className="absolute top-4 right-8 text-7xl">🗺</div>
+          <div className="absolute bottom-2 left-12 text-5xl">👶</div>
         </div>
-        {/* Mobile filter toggle */}
-        <button
-          onClick={() => setShowFilters(v => !v)}
-          className={`md:hidden flex items-center gap-1.5 px-4 py-3 rounded-2xl text-sm font-medium transition-all shrink-0 ${
-            showFilters || activeFilterCount > 0
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300'
-          }`}
-          aria-expanded={showFilters}
-          aria-controls="filter-panel"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        <div className="relative max-w-6xl mx-auto px-4 py-10 md:py-14">
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold">釜山景點・餐廳・公園</h1>
+              <p className="text-blue-200 mt-1.5 text-sm md:text-base">共 <span className="text-white font-semibold">{filtered.length}</span> 個地點，全部以 2-6 歲小孩為優先考量</p>
+            </div>
+            {/* View mode toggle */}
+            <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl p-1 backdrop-blur-sm">
+              <button
+                onClick={() => setViewMode('list')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  viewMode === 'list' ? 'bg-white text-blue-700 shadow-sm' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                列表
+              </button>
+              <button
+                onClick={() => setViewMode('map')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                  viewMode === 'map' ? 'bg-white text-blue-700 shadow-sm' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+                地圖
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* Wave decoration */}
+        <div className="absolute bottom-0 left-0 right-0" aria-hidden="true">
+          <svg viewBox="0 0 1440 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path d="M0 40L60 35C120 30 240 20 360 16.7C480 13.3 600 16.7 720 20C840 23.3 960 26.7 1080 25C1200 23.3 1320 16.7 1380 13.3L1440 10V40H0Z" fill="#f9fafb"/>
           </svg>
-          篩選
-          {activeFilterCount > 0 && (
-            <span className={`inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold ${
-              showFilters ? 'bg-white text-blue-600' : 'bg-blue-600 text-white'
-            }`}>
-              {activeFilterCount}
-            </span>
-          )}
-        </button>
+        </div>
+      </section>
+
+      <div className="max-w-6xl mx-auto px-4 pt-6 pb-10">
+      {/* Sticky search + Filter toggle row */}
+      <div className="sticky top-16 z-40 -mx-4 px-4 py-3 bg-gray-50/95 backdrop-blur-md border-b border-gray-100/80 mb-4 transition-shadow" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+        <div className="flex gap-2 max-w-6xl mx-auto">
+          <div className="relative flex-1">
+            <label htmlFor="spot-search" className="sr-only">搜尋景點、餐廳、公園</label>
+            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              id="spot-search"
+              type="search"
+              placeholder="搜尋景點、餐廳、公園、無辣..."
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-shadow hover:shadow-md"
+              autoComplete="off"
+            />
+          </div>
+          {/* Mobile filter toggle */}
+          <button
+            onClick={() => setShowFilters(v => !v)}
+            className={`md:hidden flex items-center gap-1.5 px-4 py-3 rounded-2xl text-sm font-medium transition-all shrink-0 ${
+              showFilters || activeFilterCount > 0
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300'
+            }`}
+            aria-expanded={showFilters}
+            aria-controls="filter-panel"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            篩選
+            {activeFilterCount > 0 && (
+              <span className={`inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold ${
+                showFilters ? 'bg-white text-blue-600' : 'bg-blue-600 text-white'
+              }`}>
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Active filter chips (mobile, collapsed state) */}
@@ -178,25 +234,25 @@ function SpotsContent() {
           {typeFilter !== 'all' && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
               {filterTypes.find(t => t.id === typeFilter)?.label}
-              <button onClick={() => setTypeFilter('all')} className="ml-0.5 hover:text-blue-900" aria-label="移除類型篩選">×</button>
+              <button onClick={() => setTypeFilter('all')} className="ml-0.5 inline-flex items-center justify-center w-5 h-5 hover:text-blue-900" aria-label="移除類型篩選">×</button>
             </span>
           )}
           {kidFilter > 0 && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium">
               {kidScoreOptions.find(o => o.value === kidFilter)?.label}
-              <button onClick={() => setKidFilter(0)} className="ml-0.5 hover:text-emerald-900" aria-label="移除親子篩選">×</button>
+              <button onClick={() => setKidFilter(0)} className="ml-0.5 inline-flex items-center justify-center w-5 h-5 hover:text-emerald-900" aria-label="移除親子篩選">×</button>
             </span>
           )}
           {showFavOnly && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-red-50 text-red-700 rounded-full text-xs font-medium">
               ❤️ 收藏
-              <button onClick={() => setShowFavOnly(false)} className="ml-0.5 hover:text-red-900" aria-label="取消只看收藏">×</button>
+              <button onClick={() => setShowFavOnly(false)} className="ml-0.5 inline-flex items-center justify-center w-5 h-5 hover:text-red-900" aria-label="取消只看收藏">×</button>
             </span>
           )}
           {sortByDist && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
               📍 距離排序
-              <button onClick={() => { setSortByDist(false); setUserPos(null) }} className="ml-0.5 hover:text-blue-900" aria-label="取消距離排序">×</button>
+              <button onClick={() => { setSortByDist(false); setUserPos(null) }} className="ml-0.5 inline-flex items-center justify-center w-5 h-5 hover:text-blue-900" aria-label="取消距離排序">×</button>
             </span>
           )}
         </div>
@@ -214,7 +270,7 @@ function SpotsContent() {
           {filterTypes.map(t => (
             <button
               key={t.id}
-              onClick={() => setTypeFilter(t.id)}
+              onClick={() => applyFilterMobile(() => setTypeFilter(t.id))}
               aria-pressed={typeFilter === t.id}
               className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all ${
                 typeFilter === t.id
@@ -226,7 +282,7 @@ function SpotsContent() {
             </button>
           ))}
           <button
-            onClick={() => setShowFavOnly(v => !v)}
+            onClick={() => applyFilterMobile(() => setShowFavOnly(v => !v))}
             aria-pressed={showFavOnly}
             className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all ${
               showFavOnly
@@ -243,7 +299,7 @@ function SpotsContent() {
           {kidScoreOptions.map(opt => (
             <button
               key={opt.value}
-              onClick={() => setKidFilter(opt.value)}
+              onClick={() => applyFilterMobile(() => setKidFilter(opt.value))}
               aria-pressed={kidFilter === opt.value}
               className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all ${
                 kidFilter === opt.value
@@ -343,25 +399,46 @@ function SpotsContent() {
       ) : viewMode === 'map' ? (
         <SpotsMapView spots={filtered} />
       ) : (
+        <>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map(({ spot, dist }, i) => (
+          {filtered.slice(0, visibleCount).map(({ spot, dist }, i) => (
             <div
               key={spot.id}
-              className={i < 12 ? 'animate-card-enter' : ''}
-              style={i < 12 ? { animationDelay: `${i * 50}ms` } : undefined}
+              className={i < ITEMS_PER_PAGE ? 'animate-card-enter' : ''}
+              style={i < ITEMS_PER_PAGE ? { animationDelay: `${i * 50}ms` } : undefined}
             >
               <SpotCard spot={spot} distance={dist} />
             </div>
           ))}
         </div>
+        {/* Load more */}
+        {visibleCount < filtered.length && (
+          <div className="text-center mt-8">
+            <button
+              onClick={() => setVisibleCount(v => Math.min(v + ITEMS_PER_PAGE, filtered.length))}
+              className="inline-flex items-center gap-2 px-8 py-3 bg-white text-gray-700 font-medium rounded-2xl border border-gray-200 hover:border-blue-300 hover:text-blue-600 hover:shadow-md transition-all"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              顯示更多（還有 {filtered.length - visibleCount} 個）
+            </button>
+          </div>
+        )}
+        {/* Results count summary */}
+        {visibleCount >= filtered.length && filtered.length > ITEMS_PER_PAGE && (
+          <p className="text-center text-sm text-gray-400 mt-6">已顯示全部 {filtered.length} 個結果</p>
+        )}
+        </>
       )}
+    </div>
     </div>
   )
 }
 
 export default function SpotsPage() {
   return (
-    <Suspense fallback={<div className="p-10 text-center text-gray-400">載入中...</div>}>
+    <Suspense fallback={<div className="p-10 text-center text-gray-400"><div className="animate-spin text-3xl mb-2 inline-block">🌍</div><p className="text-sm">載入中...</p></div>}>
       <SpotsContent />
     </Suspense>
   )

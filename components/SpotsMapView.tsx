@@ -102,34 +102,33 @@ export default function SpotsMapView({ spots }: SpotsMapViewProps) {
     }
   }, [])
 
-  // Initialize map and markers
+  // Initialize map and markers — reuse existing map instance on filter changes
   useEffect(() => {
     if (!loaded || !mapRef.current || spots.length === 0) return
 
     const { naver } = window
     if (!naver?.maps) return
 
-    // Center on Busan
-    const center = new naver.maps.LatLng(35.1796, 129.0756)
-
-    const map = new naver.maps.Map(mapRef.current, {
-      center,
-      zoom: 12,
-      minZoom: 10,
-      maxZoom: 18,
-      zoomControl: true,
-      zoomControlOptions: {
-        position: 3, // TOP_RIGHT
-      },
-    })
-
-    mapInstanceRef.current = map
+    let map = mapInstanceRef.current
+    if (!map) {
+      const center = new naver.maps.LatLng(35.1796, 129.0756)
+      map = new naver.maps.Map(mapRef.current, {
+        center,
+        zoom: 12,
+        minZoom: 10,
+        maxZoom: 18,
+        zoomControl: true,
+        zoomControlOptions: {
+          position: 3,
+        },
+      })
+      mapInstanceRef.current = map
+    }
 
     // Clear old markers
     markersRef.current.forEach(m => m.setMap(null))
     markersRef.current = []
 
-    // Build bounds
     const bounds = new naver.maps.LatLngBounds(
       new naver.maps.LatLng(spots[0].spot.lat, spots[0].spot.lng),
       new naver.maps.LatLng(spots[0].spot.lat, spots[0].spot.lng)
@@ -151,7 +150,7 @@ export default function SpotsMapView({ spots }: SpotsMapViewProps) {
 
       naver.maps.Event.addListener(marker, 'click', () => {
         setSelectedSpot(spot)
-        map.panTo(pos)
+        map!.panTo(pos)
       })
 
       markersRef.current.push(marker)
@@ -196,7 +195,7 @@ export default function SpotsMapView({ spots }: SpotsMapViewProps) {
               {getTypeIcon(selectedSpot.type)} {typeLabels[selectedSpot.type]}
             </span>
             <h3 className="font-bold text-gray-900 mt-0.5">{selectedSpot.name_zh}</h3>
-            <p className="text-xs text-gray-400" lang="ko">{selectedSpot.name_ko}</p>
+            <p className="text-xs text-gray-500" lang="ko">{selectedSpot.name_ko}</p>
             <p className="text-sm text-gray-600 mt-2 line-clamp-2">{selectedSpot.description}</p>
             <div className="flex items-center gap-2 mt-2">
               <span className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">{selectedSpot.district}</span>

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { spots, typeLabels, spiceLevelLabels } from '@/lib/data'
-import { formatKRW, formatKRWtoTWD, getTypeColor, getTypeIcon, minutesToHoursText } from '@/lib/utils'
+import { formatKRW, formatKRWtoTWD, getTypeColor, getTypeIcon, minutesToHoursText, haversineDistance, formatDistance, walkingTime } from '@/lib/utils'
 import { Dish } from '@/lib/types'
 import NaverMap from '@/components/NaverMap'
 import ReservationSection from '@/components/ReservationSection'
@@ -11,6 +11,7 @@ import ShareButtons from '@/components/ShareButtons'
 import FavoriteButton from '@/components/FavoriteButton'
 import BreadcrumbSchema from '@/components/BreadcrumbSchema'
 import SpotQuickActions from '@/components/SpotQuickActions'
+import SpotSectionNav from '@/components/SpotSectionNav'
 
 export function generateStaticParams() {
   return spots.map(s => ({ slug: s.slug }))
@@ -136,7 +137,7 @@ function DishCard({ dish }: { dish: Dish }) {
           <span className="font-semibold text-gray-900">{dish.name_zh}</span>
           {dish.must_order && <span className="text-xs bg-orange-500 text-white px-2.5 py-0.5 rounded-full font-medium shadow-sm">必點</span>}
         </div>
-        <p className="text-xs text-gray-400 mt-0.5" lang="ko">{dish.name_ko}</p>
+        <p className="text-xs text-gray-500 mt-0.5" lang="ko">{dish.name_ko}</p>
         <p className="text-sm text-gray-600 mt-1 leading-relaxed">{dish.description}</p>
         <div className="flex items-center gap-3 mt-2">
           <span className="text-sm font-bold text-green-700">{formatKRW(dish.price_krw)}</span>
@@ -152,9 +153,11 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
   const spot = spots.find(s => s.slug === slug)
   if (!spot) notFound()
 
-  const relatedSpots = spots
-    .filter(s => s.id !== spot.id && (s.district === spot.district || s.type === spot.type))
-    .slice(0, 3)
+  const nearbySpots = spots
+    .filter(s => s.id !== spot.id)
+    .map(s => ({ spot: s, dist: haversineDistance(spot.lat, spot.lng, s.lat, s.lng) }))
+    .sort((a, b) => a.dist - b.dist)
+    .slice(0, 6)
 
   const priceDisplay = spot.ticket_price_free
     ? '免費'
@@ -166,22 +169,34 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
 
   const jsonLd = generateJsonLd(spot)
 
+  // Build dynamic section nav based on available content
+  const sectionNavItems = [
+    { id: 'spot-overview', label: '總覽', icon: '📋' },
+    ...(spot.review_summary ? [{ id: 'spot-reviews', label: '評價', icon: '📝' }] : []),
+    ...(spot.reservation_links?.length ? [{ id: 'spot-reservation', label: '訂位', icon: '🪑' }] : []),
+    ...(spot.recommended_dishes?.length ? [{ id: 'spot-dishes', label: '菜單', icon: '🍽' }] : []),
+    ...(spot.staff_phrases?.length ? [{ id: 'spot-phrases', label: '韓文', icon: '👆' }] : []),
+    { id: 'spot-map', label: '地圖', icon: '🗺' },
+    { id: 'spot-nearby', label: '附近', icon: '📍' },
+  ]
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8 pb-32 md:pb-8">
+      <SpotSectionNav sections={sectionNavItems} />
       <BreadcrumbSchema items={[
         { name: '景點餐廳', href: '/spots' },
         { name: spot.name_zh, href: `/spots/${spot.slug}` },
       ]} />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026') }}
       />
       <Link href="/spots" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 mb-6 transition-colors">
         ← 返回景點列表
       </Link>
 
       {/* Hero Image */}
-      <div className="relative h-72 md:h-96 rounded-3xl overflow-hidden bg-gray-200 mb-8">
+      <div data-spot-hero className="relative h-72 md:h-96 rounded-3xl overflow-hidden bg-gray-200 mb-8">
         <Image src={spot.image_url} alt={spot.name_zh} fill className="object-cover" priority sizes="(max-width: 1024px) 100vw, 896px" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         {/* Favorite button overlay */}
@@ -258,7 +273,9 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
         <div className="lg:col-span-2 space-y-8">
 
           {/* Description */}
-          <p className="text-gray-700 leading-relaxed text-lg">{spot.description}</p>
+          <div id="spot-overview">
+            <p className="text-gray-700 leading-relaxed text-lg">{spot.description}</p>
+          </div>
 
           {/* Kid-friendly badge */}
           <KidScoreBadge score={spot.kid_friendly_score} notes={spot.kid_friendly_notes} />
@@ -277,7 +294,7 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
 
           {/* Pros & Cons */}
           {spot.review_summary && (
-            <section aria-labelledby="review-heading">
+            <section id="spot-reviews" aria-labelledby="review-heading">
               <h2 id="review-heading" className="text-xl font-bold text-gray-900 mb-4">📝 網友評價總結</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-green-50 border border-green-100 rounded-2xl p-4">
@@ -312,15 +329,17 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
 
           {/* Reservation (only if has links) */}
           {spot.reservation_links && spot.reservation_links.length > 0 && (
+            <div id="spot-reservation">
             <ReservationSection
               links={spot.reservation_links}
               reservationRequired={spot.reservation_required}
             />
+            </div>
           )}
 
           {/* Recommended Dishes */}
           {spot.recommended_dishes && spot.recommended_dishes.length > 0 && (
-            <section aria-labelledby="dishes-heading">
+            <section id="spot-dishes" aria-labelledby="dishes-heading">
               <h2 id="dishes-heading" className="text-xl font-bold text-gray-900 mb-4">🍽 推薦必點菜單</h2>
               <div className="space-y-3">
                 {spot.recommended_dishes.map((dish, i) => <DishCard key={i} dish={dish} />)}
@@ -345,7 +364,7 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
 
           {/* Staff Phrases */}
           {spot.staff_phrases && spot.staff_phrases.length > 0 && (
-            <section aria-labelledby="staff-phrases-heading">
+            <section id="spot-phrases" aria-labelledby="staff-phrases-heading">
               <h2 id="staff-phrases-heading" className="text-xl font-bold text-gray-900 mb-2">👆 指給店員看</h2>
               <p className="text-sm text-gray-400 mb-4">點選句子可複製，或直接拿手機給店員看</p>
               <div className="space-y-3">
@@ -462,7 +481,7 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
           )}
 
           {/* Naver Map */}
-          <div data-section="map">
+          <div id="spot-map" data-section="map">
             <h3 className="font-bold text-gray-900 mb-3">🗺 地圖 / 導航</h3>
             <NaverMap lat={spot.lat} lng={spot.lng} name={spot.name_ko} address={spot.address_ko} />
           </div>
@@ -498,19 +517,33 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
         firstReservationUrl={spot.reservation_links?.[0]?.url}
       />
 
-      {/* Related Spots */}
-      {relatedSpots.length > 0 && (
-        <section className="mt-14">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">附近 / 同類型推薦</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {relatedSpots.map(s => (
+      {/* Nearby Spots */}
+      {nearbySpots.length > 0 && (
+        <section id="spot-nearby" className="mt-14">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">附近景點推薦</h2>
+          <p className="text-sm text-gray-400 mb-6">依照實際距離排序，方便安排同日行程</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {nearbySpots.map(({ spot: s, dist }) => (
               <Link key={s.id} href={`/spots/${s.slug}`} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-all hover:-translate-y-0.5">
                 <div className="relative h-36">
                   <Image src={s.image_url} alt={s.name_zh} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="350px" />
+                  <div className="absolute top-2 left-2">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getTypeColor(s.type)}`}>
+                      {getTypeIcon(s.type)} {typeLabels[s.type]}
+                    </span>
+                  </div>
+                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs font-medium text-blue-700 shadow-sm">
+                    {formatDistance(dist)}
+                  </div>
                 </div>
                 <div className="p-3">
                   <p className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors">{s.name_zh}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{s.district}</p>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-xs text-gray-400">{s.district}</span>
+                    {dist < 2 && (
+                      <span className="text-xs text-green-600 font-medium">{walkingTime(dist)}</span>
+                    )}
+                  </div>
                 </div>
               </Link>
             ))}

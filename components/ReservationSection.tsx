@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { ReservationLink } from '@/lib/types'
+import { trackEvent } from '@/lib/analytics'
 
 const platformColors: Record<string, string> = {
   'Catch Table': 'bg-rose-600 hover:bg-rose-700 text-white',
@@ -37,7 +38,7 @@ export default function ReservationSection({ links, reservationRequired }: Props
 
   function buildUrl(link: ReservationLink): string {
     if (!link.url.startsWith('https://')) return '#'
-    if (!selectedDate) return link.url
+    if (!selectedDate || !/^\d{4}-\d{2}-\d{2}$/.test(selectedDate)) return link.url
     const base = link.url
     if (link.platform === 'Catch Table') {
       return `${base}&date=${selectedDate}`
@@ -90,6 +91,7 @@ export default function ReservationSection({ links, reservationRequired }: Props
             href={buildUrl(link)}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent('reservation_click', { platform: link.platform, label: link.label })}
             className={`flex items-center gap-3 px-5 py-4 rounded-2xl font-semibold text-sm transition-all hover:scale-[1.02] shadow-sm ${platformColors[link.platform] ?? 'bg-gray-700 hover:bg-gray-800 text-white'}`}
           >
             <span className="text-xl shrink-0">{platformIcons[link.platform] ?? '🔗'}</span>
@@ -108,12 +110,12 @@ export default function ReservationSection({ links, reservationRequired }: Props
 
       {/* Catch Table hint */}
       {links.some(l => l.platform === 'Tabling') && (
-        <div className="mt-3 text-xs text-gray-400 bg-gray-50 rounded-xl px-3 py-2">
+        <div className="mt-3 text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2">
           💡 Tabling 是韓國熱門候位 App，可遠端加入等位名單，到附近再去取號，省去現場枯等時間。
         </div>
       )}
       {links.some(l => l.platform === 'Catch Table') && (
-        <div className="mt-3 text-xs text-gray-400 bg-gray-50 rounded-xl px-3 py-2">
+        <div className="mt-3 text-xs text-gray-500 bg-gray-50 rounded-xl px-3 py-2">
           💡 使用 <strong>Catch Table Global App</strong>（App Store 搜尋「CATCH TABLE」，選 GLOBAL 版本）。點擊按鈕會直接開啟 App，在 App 內搜尋餐廳名稱即可訂位。
         </div>
       )}

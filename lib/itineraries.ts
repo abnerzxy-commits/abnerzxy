@@ -11,7 +11,12 @@ export const suggestedItineraries: SuggestedItinerary[] = [
     schedule: [
       {
         day: 1, title: 'Day 1（4/1）抵達釜山・海雲台逛逛｜Uber',
-        items: [],
+        items: [
+          { start: '14:00', duration: 60, note: '抵達金海機場，搭 Uber 前往海雲台飯店（車程約 50 分鐘，費用約 ₩30,000）。建議先在機場 GS25 買 T-money 交通卡' },
+          { start: '15:30', duration: 30, note: '飯店 check-in，放行李整理一下。小孩可以先休息補眠' },
+          { start: '16:30', duration: 90, note: '海雲台海灘散步，小孩可以玩沙踩水。沿海邊走到尾浦鐵道附近拍照' },
+          { start: '18:30', duration: 90, note: '海雲台市場覓食，推薦路邊小吃和便利商店晚餐，第一天不排太緊。早點讓小孩休息調時差' },
+        ],
       },
       {
         day: 2, title: 'Day 2（4/2）包車：大渚賞櫻→溫泉川→Luge→樂天',
@@ -54,7 +59,12 @@ export const suggestedItineraries: SuggestedItinerary[] = [
       },
       {
         day: 6, title: 'Day 6（4/6）回家｜Uber',
-        items: [],
+        items: [
+          { start: '09:00', duration: 60, note: '飯店退房。把握最後時間到海雲台海灘走走拍照留念' },
+          { start: '10:30', duration: 60, note: '海雲台周邊最後採買：便利商店零食、藥妝店面膜。推薦 GS25 的香蕉牛奶和 Homerun Ball 巧克力球' },
+          { start: '12:00', duration: 50, note: '搭 Uber 前往金海機場（車程約 50 分鐘，費用約 ₩30,000）。建議提早出發避開塞車' },
+          { start: '13:00', duration: 120, note: '機場報到、退稅、逛免稅店。金海機場不大，1.5 小時前到就夠。帶小孩記得預留多一點時間' },
+        ],
       },
     ],
   },

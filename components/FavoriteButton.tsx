@@ -1,5 +1,6 @@
 'use client'
 import { useFavorites } from './useFavorites'
+import { trackEvent } from '@/lib/analytics'
 
 interface FavoriteButtonProps {
   spotId: string
@@ -20,6 +21,7 @@ export default function FavoriteButton({ spotId, size = 'sm', className = '' }: 
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()
+        trackEvent('favorite_toggle', { spot_id: spotId, action: active ? 'remove' : 'add' })
         toggle(spotId)
       }}
       aria-label={active ? '取消收藏' : '加入收藏'}

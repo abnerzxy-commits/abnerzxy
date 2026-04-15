@@ -1,5 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
+import { trackEvent } from '@/lib/analytics'
 
 interface Props {
   situation: string
@@ -9,6 +10,7 @@ interface Props {
 export default function CopyablePhrase({ situation, korean }: Props) {
   const [copied, setCopied] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const phraseRef = useRef<HTMLParagraphElement>(null)
 
   useEffect(() => {
     return () => {
@@ -19,12 +21,12 @@ export default function CopyablePhrase({ situation, korean }: Props) {
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(korean)
+      trackEvent('phrase_copy', { situation, korean })
       setCopied(true)
       if (timerRef.current) clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => setCopied(false), 1500)
     } catch {
-      // Fallback: select text for manual copy
-      const el = document.getElementById(`phrase-${korean}`)
+      const el = phraseRef.current
       if (el) {
         const range = document.createRange()
         range.selectNodeContents(el)
@@ -47,7 +49,7 @@ export default function CopyablePhrase({ situation, korean }: Props) {
         </span>
       </div>
       <div className="px-4 py-4">
-        <p id={`phrase-${korean}`} className="text-3xl font-bold text-gray-900 leading-tight tracking-wide select-all">
+        <p ref={phraseRef} className="text-3xl font-bold text-gray-900 leading-tight tracking-wide select-all">
           {korean}
         </p>
       </div>
