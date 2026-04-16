@@ -250,7 +250,9 @@ ${rawContent}
       view_count: Number(viewCount) || 0,
     })
   } catch (err) {
-    console.error('Extraction error:', err)
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Extraction error:', err)
+    }
     return NextResponse.json({ error: '萃取失敗，請稍後再試' }, { status: 500 })
   }
 }

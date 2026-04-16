@@ -188,3 +188,17 @@ html {
   ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
   ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 }
+
+/* Respect users who prefer reduced motion — disable decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-float-1, .animate-float-2, .animate-float-3,
+  .animate-glow, .animate-gradient, .animate-shimmer {
+    animation: none !important;
+  }
+}

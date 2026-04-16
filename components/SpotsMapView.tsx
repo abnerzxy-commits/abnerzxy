@@ -90,7 +90,9 @@ export default function SpotsMapView({ spots }: SpotsMapViewProps) {
     const script = document.createElement('script')
     const naverKey = process.env.NEXT_PUBLIC_NAVER_MAP_KEY
     if (!naverKey) {
-      console.warn('NEXT_PUBLIC_NAVER_MAP_KEY is not set')
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn('NEXT_PUBLIC_NAVER_MAP_KEY is not set')
+      }
       return
     }
     script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${naverKey}&callback=initNaverMap`

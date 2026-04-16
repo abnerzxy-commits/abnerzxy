@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { suggestedItineraries, spots, typeLabels } from '@/lib/data'
-import { formatKRW, getTypeColor, getTypeIcon, minutesToHoursText } from '@/lib/utils'
+import { formatKRW, getTypeColor, getTypeIcon, minutesToHoursText, estimateItineraryCost } from '@/lib/utils'
 import BreadcrumbSchema from '@/components/BreadcrumbSchema'
 
 export function generateStaticParams() {
@@ -32,6 +32,8 @@ export default async function ItineraryDetailPage({ params }: { params: Promise<
   if (!itin) notFound()
 
   const allSpots = itin.spotIds.map(sid => spots.find(s => s.id === sid)).filter((s): s is (typeof spots)[number] => s != null)
+  const cost = estimateItineraryCost(itin, spots)
+  const perPersonAvg = Math.round(cost.total / (cost.adults + cost.children))
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -55,30 +57,108 @@ export default async function ItineraryDetailPage({ params }: { params: Promise<
       </div>
 
       {/* Summary row */}
-      <div className="grid grid-cols-3 gap-4 mb-10">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 mb-8">
         {[
           { label: '行程天數', value: `${itin.days} 天` },
           { label: '景點數量', value: `${itin.spotIds.length} 個` },
           { label: '涵蓋城市', value: [...new Set(allSpots.map(s => s?.city))].join('・') },
+          { label: '每人預算', value: formatKRW(perPersonAvg), highlight: true },
         ].map(item => (
-          <div key={item.label} className="bg-white rounded-2xl p-4 text-center border border-gray-100 shadow-sm">
-            <div className="text-xl font-bold text-blue-600">{item.value}</div>
-            <div className="text-xs text-gray-500 mt-1">{item.label}</div>
+          <div key={item.label} className={`rounded-2xl p-4 text-center shadow-sm border ${
+            item.highlight
+              ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white border-transparent'
+              : 'bg-white text-blue-600 border-gray-100'
+          }`}>
+            <div className={`text-lg md:text-xl font-bold ${item.highlight ? 'text-white' : 'text-blue-600'}`}>{item.value}</div>
+            <div className={`text-xs mt-1 ${item.highlight ? 'text-blue-100' : 'text-gray-500'}`}>{item.label}</div>
           </div>
         ))}
       </div>
 
+      {/* Cost breakdown summary */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6 mb-10">
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
+          <div>
+            <h2 className="text-base font-bold text-gray-900">預估全家花費</h2>
+            <p className="text-xs text-gray-400 mt-0.5">依 {cost.adults} 大人 + {cost.children} 小孩估算，僅供預算參考</p>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-blue-600">{formatKRW(cost.total)}</div>
+            <div className="text-xs text-gray-500">全家總計</div>
+          </div>
+        </div>
+
+        {/* Category bars */}
+        <div className="grid grid-cols-3 gap-3 mb-5">
+          {[
+            { icon: '🎟', label: '門票', value: cost.tickets, color: 'bg-pink-500' },
+            { icon: '🍴', label: '餐費', value: cost.meals, color: 'bg-orange-500' },
+            { icon: '🚕', label: '交通', value: cost.transport, color: 'bg-blue-500' },
+          ].map(cat => {
+            const pct = cost.total > 0 ? Math.round((cat.value / cost.total) * 100) : 0
+            return (
+              <div key={cat.label} className="bg-gray-50 rounded-xl p-3">
+                <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1">
+                  <span>{cat.icon}</span><span>{cat.label}</span>
+                </div>
+                <div className="text-sm font-bold text-gray-900">{formatKRW(cat.value)}</div>
+                <div className="mt-1.5 h-1 bg-gray-200 rounded-full overflow-hidden">
+                  <div className={`h-full ${cat.color} rounded-full transition-all`} style={{ width: `${pct}%` }} />
+                </div>
+                <div className="text-[10px] text-gray-400 mt-0.5">{pct}%</div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Per-day costs */}
+        {cost.perDay.length > 1 && (
+          <div className="pt-4 border-t border-gray-100">
+            <p className="text-xs text-gray-500 mb-2.5 font-medium">每日花費</p>
+            <div className="flex items-end gap-2 h-20">
+              {cost.perDay.map((amount, i) => {
+                const maxDay = Math.max(...cost.perDay, 1)
+                const h = Math.max(8, Math.round((amount / maxDay) * 100))
+                const compactAmount = amount >= 10000 ? `${Math.round(amount / 1000)}k` : amount.toString()
+                return (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-1.5 group">
+                    <span className="text-[10px] text-blue-700 font-semibold whitespace-nowrap md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                      ₩{compactAmount}
+                    </span>
+                    <div
+                      className="w-full bg-gradient-to-t from-blue-500 to-indigo-400 rounded-md transition-all"
+                      style={{ height: `${h}%` }}
+                      title={formatKRW(amount)}
+                      aria-label={`第 ${i + 1} 天花費 ${formatKRW(amount)}`}
+                    />
+                    <span className="text-[10px] text-gray-500 font-medium">D{i + 1}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Day-by-day Schedule */}
       <div className="space-y-10">
-        {itin.schedule.map(day => (
+        {itin.schedule.map((day, dayIdx) => (
           <section key={day.day}>
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center font-bold text-lg shrink-0">
                 D{day.day}
               </div>
-              <div>
+              <div className="flex-1">
                 <h2 className="text-xl font-bold text-gray-900">{day.title}</h2>
-                <p className="text-sm text-gray-400">{day.items.length} 個活動</p>
+                <div className="flex items-center gap-3 text-sm text-gray-400 mt-0.5">
+                  <span>{day.items.length} 個活動</span>
+                  {cost.perDay[dayIdx] > 0 && (
+                    <>
+                      <span className="text-gray-300">·</span>
+                      <span className="text-blue-600 font-semibold">預估 {formatKRW(cost.perDay[dayIdx])}</span>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
