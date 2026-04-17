@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { spots, typeLabels, spiceLevelLabels } from '@/lib/data'
-import { formatKRW, formatKRWtoTWD, getTypeColor, getTypeIcon, minutesToHoursText, haversineDistance, formatDistance, walkingTime } from '@/lib/utils'
+import { formatKRW, formatKRWtoTWD, getTypeColor, getTypeIcon, minutesToHoursText, haversineDistance, formatDistance, walkingTime, getOpenStatus, getCurrentDayKey } from '@/lib/utils'
 import { Dish } from '@/lib/types'
 import NaverMap from '@/components/NaverMap'
 import ReservationSection from '@/components/ReservationSection'
@@ -12,6 +12,7 @@ import FavoriteButton from '@/components/FavoriteButton'
 import BreadcrumbSchema from '@/components/BreadcrumbSchema'
 import SpotQuickActions from '@/components/SpotQuickActions'
 import SpotSectionNav from '@/components/SpotSectionNav'
+import { OpenStatusBadge, OpenStatusDayHighlight } from '@/components/OpenStatusBadge'
 
 export function generateStaticParams() {
   return spots.map(s => ({ slug: s.slug }))
@@ -210,7 +211,10 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
                 {getTypeIcon(spot.type)} {typeLabels[spot.type]}
               </span>
               <h1 className="text-3xl md:text-4xl font-bold text-white mt-2 drop-shadow">{spot.name_zh}</h1>
-              <p className="text-white/80 text-lg">{spot.name_ko}</p>
+              <div className="flex items-center gap-3 mt-1">
+                <p className="text-white/80 text-lg">{spot.name_ko}</p>
+                <OpenStatusBadge openingHours={spot.opening_hours} />
+              </div>
             </div>
             {spot.rating && (
               <div className="bg-white/90 backdrop-blur rounded-2xl px-4 py-2 text-center">
@@ -242,10 +246,15 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
               <p className="text-xs text-gray-400 mt-0.5 truncate">{spot.address_ko}</p>
             </div>
           </div>
-          {spot.opening_hours?.note && (
+          {spot.opening_hours && (
             <div className="flex items-center gap-3">
               <span className="text-lg shrink-0">🕐</span>
-              <p className="text-sm text-orange-600 font-medium">{spot.opening_hours.note}</p>
+              <div>
+                <OpenStatusBadge openingHours={spot.opening_hours} />
+                {spot.opening_hours.note && (
+                  <p className="text-sm text-orange-600 font-medium mt-1">{spot.opening_hours.note}</p>
+                )}
+              </div>
             </div>
           )}
           {spot.time_needed_minutes ? (
@@ -460,23 +469,14 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
           {/* Opening Hours */}
           {spot.opening_hours && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <h3 className="font-bold text-gray-900 mb-3">🕐 營業時間</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-gray-900">🕐 營業時間</h3>
+                <OpenStatusBadge openingHours={spot.opening_hours} />
+              </div>
               {spot.opening_hours.note && (
                 <p className="text-sm text-orange-600 bg-orange-50 rounded-xl p-3 mb-3">{spot.opening_hours.note}</p>
               )}
-              <div className="space-y-1 text-sm">
-                {(['mon','tue','wed','thu','fri','sat','sun'] as const).map(day => {
-                  const labels: Record<string, string> = { mon: '週一', tue: '週二', wed: '週三', thu: '週四', fri: '週五', sat: '週六', sun: '週日' }
-                  const val = spot.opening_hours?.[day]
-                  if (!val) return null
-                  return (
-                    <div key={day} className="flex justify-between">
-                      <span className="text-gray-500">{labels[day]}</span>
-                      <span className="text-gray-900 font-medium">{val}</span>
-                    </div>
-                  )
-                })}
-              </div>
+              <OpenStatusDayHighlight openingHours={spot.opening_hours} />
             </div>
           )}
 

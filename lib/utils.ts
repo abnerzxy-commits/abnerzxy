@@ -196,6 +196,89 @@ export function getItineraryTransportModes(itin: SuggestedItinerary): string[] {
   return priority.filter(m => modes.has(m))
 }
 
+/** Check if a spot is currently open based on opening_hours and KST */
+export type OpenStatus = 'open' | 'closed' | 'closing-soon' | 'unknown'
+
+export interface OpenStatusResult {
+  status: OpenStatus
+  label: string
+  todayHours: string | null
+  currentDay: string
+}
+
+const DAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const
+
+function parseTimeRange(timeStr: string): { open: number; close: number }[] {
+  // Handle "休息" or "공휴일" etc.
+  if (!timeStr || timeStr.includes('休') || timeStr.toLowerCase().includes('closed')) {
+    return []
+  }
+  // Handle formats like "10:00-22:00", "10:00~22:00", "10:00-14:00, 17:00-22:00"
+  const ranges = timeStr.split(/[,;]/).map(s => s.trim()).filter(Boolean)
+  const result: { open: number; close: number }[] = []
+  for (const range of ranges) {
+    const match = range.match(/(\d{1,2}):(\d{2})\s*[-~]\s*(\d{1,2}):(\d{2})/)
+    if (match) {
+      const openMin = parseInt(match[1]) * 60 + parseInt(match[2])
+      let closeMin = parseInt(match[3]) * 60 + parseInt(match[4])
+      // Handle overnight (e.g. 17:00-02:00)
+      if (closeMin <= openMin) closeMin += 24 * 60
+      result.push({ open: openMin, close: closeMin })
+    }
+  }
+  return result
+}
+
+export function getOpenStatus(openingHours?: import('./types').OpeningHours): OpenStatusResult {
+  if (!openingHours) {
+    return { status: 'unknown', label: '', todayHours: null, currentDay: '' }
+  }
+
+  // Get current time in KST (UTC+9)
+  const now = new Date()
+  const kst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+  const dayIndex = kst.getDay() // 0=Sun
+  const dayKey = DAY_KEYS[dayIndex]
+  const todayHours = openingHours[dayKey] ?? null
+  const currentMinutes = kst.getHours() * 60 + kst.getMinutes()
+
+  if (!todayHours) {
+    return { status: 'unknown', label: '', todayHours: null, currentDay: dayKey }
+  }
+
+  const ranges = parseTimeRange(todayHours)
+  if (ranges.length === 0) {
+    return { status: 'closed', label: '今日公休', todayHours, currentDay: dayKey }
+  }
+
+  for (const range of ranges) {
+    if (currentMinutes >= range.open && currentMinutes < range.close) {
+      // Check if closing within 60 minutes
+      if (range.close - currentMinutes <= 60) {
+        const minsLeft = range.close - currentMinutes
+        return { status: 'closing-soon', label: `${minsLeft}分鐘後打烊`, todayHours, currentDay: dayKey }
+      }
+      return { status: 'open', label: '營業中', todayHours, currentDay: dayKey }
+    }
+  }
+
+  // Check if we haven't opened yet today
+  const firstOpen = ranges[0]
+  if (currentMinutes < firstOpen.open) {
+    const h = Math.floor(firstOpen.open / 60)
+    const m = firstOpen.open % 60
+    return { status: 'closed', label: `${h}:${m.toString().padStart(2, '0')} 開始營業`, todayHours, currentDay: dayKey }
+  }
+
+  return { status: 'closed', label: '已打烊', todayHours, currentDay: dayKey }
+}
+
+export function getCurrentDayKey(): string {
+  const now = new Date()
+  const kst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+  return DAY_KEYS[kst.getDay()]
+}
+
 const MODE_LABEL: Record<string, { icon: string; label: string }> = {
   walk: { icon: '🚶', label: '步行' },
   chartered: { icon: '🚐', label: '包車' },

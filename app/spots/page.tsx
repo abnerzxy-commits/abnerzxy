@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation'
 import { spots, filterTypes } from '@/lib/data'
 import SpotCard from '@/components/SpotCard'
 import { useFavorites } from '@/components/useFavorites'
-import { haversineDistance } from '@/lib/utils'
+import { haversineDistance, getOpenStatus } from '@/lib/utils'
 import BreadcrumbSchema from '@/components/BreadcrumbSchema'
 
 const SpotsMapView = dynamic(() => import('@/components/SpotsMapView'), {
@@ -45,6 +45,7 @@ function SpotsContent() {
   const [viewMode, setViewMode] = useState<'list' | 'map'>(initialView)
   const [showFavOnly, setShowFavOnly] = useState(initialFav)
   const [showFilters, setShowFilters] = useState(false)
+  const [openNowOnly, setOpenNowOnly] = useState(false)
   const { favorites } = useFavorites()
   const ITEMS_PER_PAGE = 12
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE)
@@ -70,7 +71,7 @@ function SpotsContent() {
   // Reset visible count when filters change
   useEffect(() => {
     setVisibleCount(ITEMS_PER_PAGE)
-  }, [query, typeFilter, kidFilter, showFavOnly, sortByDist])
+  }, [query, typeFilter, kidFilter, showFavOnly, sortByDist, openNowOnly])
 
   // Auto-close filter panel on mobile after filter selection
   const applyFilterMobile = useCallback((action: () => void) => {
@@ -88,8 +89,9 @@ function SpotsContent() {
     if (kidFilter > 0) count++
     if (showFavOnly) count++
     if (sortByDist) count++
+    if (openNowOnly) count++
     return count
-  }, [typeFilter, kidFilter, showFavOnly, sortByDist])
+  }, [typeFilter, kidFilter, showFavOnly, sortByDist, openNowOnly])
 
   const requestGPS = useCallback(() => {
     if (gpsLoading) return
@@ -121,7 +123,8 @@ function SpotsContent() {
         t => t?.toLowerCase().includes(query.toLowerCase())
       )
       const matchFav = !showFavOnly || favorites.includes(s.id)
-      return matchType && matchKid && matchQuery && matchFav
+      const matchOpen = !openNowOnly || getOpenStatus(s.opening_hours).status === 'open' || getOpenStatus(s.opening_hours).status === 'closing-soon'
+      return matchType && matchKid && matchQuery && matchFav && matchOpen
     })
 
     if (sortByDist && userPos) {
@@ -130,7 +133,7 @@ function SpotsContent() {
         .sort((a, b) => a.dist - b.dist)
     }
     return list.map(s => ({ spot: s, dist: undefined }))
-  }, [query, typeFilter, kidFilter, sortByDist, userPos, showFavOnly, favorites])
+  }, [query, typeFilter, kidFilter, sortByDist, userPos, showFavOnly, favorites, openNowOnly])
 
   return (
     <div>
@@ -149,25 +152,29 @@ function SpotsContent() {
               <p className="text-blue-200 mt-1.5 text-sm md:text-base">共 <span className="text-white font-semibold">{filtered.length}</span> 個地點，全部以 2-6 歲小孩為優先考量</p>
             </div>
             {/* View mode toggle */}
-            <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl p-1 backdrop-blur-sm">
+            <div className="flex items-center gap-2 bg-white/10 border border-white/20 rounded-xl p-1 backdrop-blur-sm" role="group" aria-label="顯示方式切換">
               <button
                 onClick={() => setViewMode('list')}
+                aria-pressed={viewMode === 'list'}
+                aria-label="列表檢視"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                   viewMode === 'list' ? 'bg-white text-blue-700 shadow-sm' : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                 </svg>
                 列表
               </button>
               <button
                 onClick={() => setViewMode('map')}
+                aria-pressed={viewMode === 'map'}
+                aria-label="地圖檢視"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
                   viewMode === 'map' ? 'bg-white text-blue-700 shadow-sm' : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
                 地圖
@@ -249,6 +256,12 @@ function SpotsContent() {
               <button onClick={() => setShowFavOnly(false)} className="ml-0.5 inline-flex items-center justify-center w-5 h-5 hover:text-red-900" aria-label="取消只看收藏">×</button>
             </span>
           )}
+          {openNowOnly && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-50 text-green-700 rounded-full text-xs font-medium">
+              🟢 營業中
+              <button onClick={() => setOpenNowOnly(false)} className="ml-0.5 inline-flex items-center justify-center w-5 h-5 hover:text-green-900" aria-label="取消營業中篩選">×</button>
+            </span>
+          )}
           {sortByDist && (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium">
               📍 距離排序
@@ -291,6 +304,17 @@ function SpotsContent() {
             }`}
           >
             {showFavOnly ? '❤️ 收藏中' : '🤍 只看收藏'}
+          </button>
+          <button
+            onClick={() => applyFilterMobile(() => setOpenNowOnly(v => !v))}
+            aria-pressed={openNowOnly}
+            className={`px-3.5 py-2 rounded-full text-sm font-medium transition-all ${
+              openNowOnly
+                ? 'bg-green-600 text-white shadow-sm'
+                : 'bg-white text-gray-600 border border-gray-200 hover:border-green-300 hover:text-green-600'
+            }`}
+          >
+            {openNowOnly ? '🟢 營業中' : '🕐 營業中'}
           </button>
         </div>
 
@@ -356,6 +380,7 @@ function SpotsContent() {
                 setTypeFilter('all')
                 setKidFilter(0)
                 setShowFavOnly(false)
+                setOpenNowOnly(false)
                 setSortByDist(false)
                 setUserPos(null)
                 setQuery('')
@@ -386,6 +411,7 @@ function SpotsContent() {
                 setTypeFilter('all')
                 setKidFilter(0)
                 setShowFavOnly(false)
+                setOpenNowOnly(false)
                 setSortByDist(false)
                 setUserPos(null)
                 setQuery('')

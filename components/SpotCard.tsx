@@ -3,7 +3,7 @@ import { useState, memo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Spot } from '@/lib/types'
-import { cn, formatKRW, getTypeColor, getTypeIcon } from '@/lib/utils'
+import { cn, formatKRW, getTypeColor, getTypeIcon, getOpenStatus } from '@/lib/utils'
 import { typeLabels } from '@/lib/data'
 import FavoriteButton from '@/components/FavoriteButton'
 
@@ -19,6 +19,7 @@ function KidScore({ score }: { score: number }) {
 
 const SpotCard = memo(function SpotCard({ spot, distance }: { spot: Spot; distance?: number }) {
   const [imgLoaded, setImgLoaded] = useState(false)
+  const openStatus = getOpenStatus(spot.opening_hours)
   const priceText = spot.ticket_price_free
     ? '免費'
     : spot.ticket_price_krw
@@ -113,6 +114,29 @@ const SpotCard = memo(function SpotCard({ spot, distance }: { spot: Spot; distan
               )}
             </div>
           </div>
+
+          {/* Open status badge */}
+          {openStatus.status !== 'unknown' && (
+            <div className="mt-2 flex items-center gap-1.5">
+              <span className={cn(
+                'inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full',
+                openStatus.status === 'open' && 'bg-green-50 text-green-700',
+                openStatus.status === 'closing-soon' && 'bg-amber-50 text-amber-700',
+                openStatus.status === 'closed' && 'bg-gray-100 text-gray-500',
+              )}>
+                <span className={cn(
+                  'w-1.5 h-1.5 rounded-full',
+                  openStatus.status === 'open' && 'bg-green-500',
+                  openStatus.status === 'closing-soon' && 'bg-amber-500 animate-pulse',
+                  openStatus.status === 'closed' && 'bg-gray-400',
+                )} aria-hidden="true" />
+                {openStatus.label}
+              </span>
+              {openStatus.todayHours && openStatus.status !== 'closed' && (
+                <span className="text-xs text-gray-400">{openStatus.todayHours}</span>
+              )}
+            </div>
+          )}
 
           {/* Distance badge */}
           {distance !== undefined && (
