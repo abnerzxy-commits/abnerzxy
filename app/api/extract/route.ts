@@ -229,14 +229,14 @@ ${rawContent}
     // Parse JSON from Claude response
     const jsonMatch = responseText.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
-      return NextResponse.json({ error: 'Failed to parse AI response', raw: responseText.slice(0, 200) }, { status: 500 })
+      return NextResponse.json({ error: 'AI 回傳格式無法解析，請重試' }, { status: 500 })
     }
 
     let extracted
     try {
       extracted = JSON.parse(jsonMatch[0])
     } catch {
-      return NextResponse.json({ error: 'AI 回傳的 JSON 格式無效', raw: responseText.slice(0, 200) }, { status: 500 })
+      return NextResponse.json({ error: 'AI 回傳的 JSON 格式無效' }, { status: 500 })
     }
 
     // Sanitize output to prevent XSS in downstream rendering

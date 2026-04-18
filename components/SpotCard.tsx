@@ -132,7 +132,7 @@ const SpotCard = memo(function SpotCard({ spot, distance }: { spot: Spot; distan
                 )} aria-hidden="true" />
                 {openStatus.label}
               </span>
-              {openStatus.todayHours && openStatus.status !== 'closed' && (
+              {openStatus.todayHours && (
                 <span className="text-xs text-gray-400">{openStatus.todayHours}</span>
               )}
             </div>
@@ -146,12 +146,19 @@ const SpotCard = memo(function SpotCard({ spot, distance }: { spot: Spot; distan
             </p>
           )}
 
-          {/* Quick pros preview */}
-          {spot.review_summary?.pros?.[0] && (
-            <p className="text-xs text-gray-500 mt-2 flex gap-1.5">
-              <span className="text-green-500 shrink-0" aria-hidden="true">✓</span>
-              <span className="line-clamp-1">{spot.review_summary.pros[0]}</span>
-            </p>
+          {/* Review count + pros preview */}
+          {(spot.review_count || spot.review_summary?.pros?.[0]) && (
+            <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+              {spot.review_count && spot.review_count > 0 && (
+                <span className="shrink-0 text-gray-400">{spot.review_count}+ 則評論</span>
+              )}
+              {spot.review_summary?.pros?.[0] && (
+                <p className="flex gap-1 min-w-0">
+                  <span className="text-green-500 shrink-0" aria-hidden="true">✓</span>
+                  <span className="line-clamp-1">{spot.review_summary.pros[0]}</span>
+                </p>
+              )}
+            </div>
           )}
         </div>
       </article>

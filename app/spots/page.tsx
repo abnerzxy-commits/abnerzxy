@@ -21,6 +21,31 @@ const SpotsMapView = dynamic(() => import('@/components/SpotsMapView'), {
   ssr: false,
 })
 
+function LoadMoreSentinel({ onVisible, remaining }: { onVisible: () => void; remaining: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const onVisibleRef = useRef(onVisible)
+  onVisibleRef.current = onVisible
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) onVisibleRef.current() },
+      { rootMargin: '200px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={ref} className="text-center mt-8 py-4">
+      <div className="inline-flex items-center gap-2 text-sm text-gray-400">
+        <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin" />
+        載入更多（還有 {remaining} 個）
+      </div>
+    </div>
+  )
+}
+
 const kidScoreOptions = [
   { value: 0, label: '全部' },
   { value: 4, label: '👶 親子適合（4星以上）' },
@@ -36,6 +61,7 @@ function SpotsContent() {
   const initialView = (searchParams.get('view') as 'list' | 'map') || 'list'
 
   const [query, setQuery] = useState(initialQuery)
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery)
   const [typeFilter, setTypeFilter] = useState(initialType)
   const [kidFilter, setKidFilter] = useState(initialKid)
   const [userPos, setUserPos] = useState<{ lat: number; lng: number } | null>(null)
@@ -51,6 +77,12 @@ function SpotsContent() {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE)
   const isInitialMount = useRef(true)
 
+  // Debounce search query — update filtering 250ms after user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query), 250)
+    return () => clearTimeout(timer)
+  }, [query])
+
   // Sync filter state to URL params (replaceState so browser back restores filters)
   useEffect(() => {
     if (isInitialMount.current) {
@@ -58,7 +90,7 @@ function SpotsContent() {
       return
     }
     const params = new URLSearchParams()
-    if (query) params.set('q', query)
+    if (debouncedQuery) params.set('q', debouncedQuery)
     if (typeFilter !== 'all') params.set('type', typeFilter)
     if (kidFilter > 0) params.set('kid', String(kidFilter))
     if (showFavOnly) params.set('fav', '1')
@@ -66,12 +98,12 @@ function SpotsContent() {
     const qs = params.toString()
     const newUrl = qs ? `${window.location.pathname}?${qs}` : window.location.pathname
     window.history.replaceState(null, '', newUrl)
-  }, [query, typeFilter, kidFilter, showFavOnly, viewMode])
+  }, [debouncedQuery, typeFilter, kidFilter, showFavOnly, viewMode])
 
   // Reset visible count when filters change
   useEffect(() => {
     setVisibleCount(ITEMS_PER_PAGE)
-  }, [query, typeFilter, kidFilter, showFavOnly, sortByDist, openNowOnly])
+  }, [debouncedQuery, typeFilter, kidFilter, showFavOnly, sortByDist, openNowOnly])
 
   // Auto-close filter panel on mobile after filter selection
   const applyFilterMobile = useCallback((action: () => void) => {
@@ -116,15 +148,20 @@ function SpotsContent() {
   }, [gpsLoading])
 
   const filtered = useMemo(() => {
+    const q = debouncedQuery.toLowerCase()
     const list = spots.filter(s => {
       const matchType = typeFilter === 'all' || (typeFilter === 'ig' ? s.tags?.includes('IG推薦') : s.type === typeFilter)
       const matchKid = kidFilter === 0 || s.kid_friendly_score >= kidFilter
-      const matchQuery = !query || [s.name_zh, s.name_ko, s.description, s.district, ...(s.tags ?? [])].some(
-        t => t?.toLowerCase().includes(query.toLowerCase())
+      const matchQuery = !q || [s.name_zh, s.name_ko, s.description, s.district, ...(s.tags ?? [])].some(
+        t => t?.toLowerCase().includes(q)
       )
       const matchFav = !showFavOnly || favorites.includes(s.id)
-      const matchOpen = !openNowOnly || getOpenStatus(s.opening_hours).status === 'open' || getOpenStatus(s.opening_hours).status === 'closing-soon'
-      return matchType && matchKid && matchQuery && matchFav && matchOpen
+      if (!matchType || !matchKid || !matchQuery || !matchFav) return false
+      if (openNowOnly) {
+        const st = getOpenStatus(s.opening_hours).status
+        if (st !== 'open' && st !== 'closing-soon') return false
+      }
+      return true
     })
 
     if (sortByDist && userPos) {
@@ -133,7 +170,7 @@ function SpotsContent() {
         .sort((a, b) => a.dist - b.dist)
     }
     return list.map(s => ({ spot: s, dist: undefined }))
-  }, [query, typeFilter, kidFilter, sortByDist, userPos, showFavOnly, favorites, openNowOnly])
+  }, [debouncedQuery, typeFilter, kidFilter, sortByDist, userPos, showFavOnly, favorites, openNowOnly])
 
   return (
     <div>
@@ -437,19 +474,12 @@ function SpotsContent() {
             </div>
           ))}
         </div>
-        {/* Load more */}
+        {/* Infinite scroll sentinel */}
         {visibleCount < filtered.length && (
-          <div className="text-center mt-8">
-            <button
-              onClick={() => setVisibleCount(v => Math.min(v + ITEMS_PER_PAGE, filtered.length))}
-              className="inline-flex items-center gap-2 px-8 py-3 bg-white text-gray-700 font-medium rounded-2xl border border-gray-200 hover:border-blue-300 hover:text-blue-600 hover:shadow-md transition-all"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-              顯示更多（還有 {filtered.length - visibleCount} 個）
-            </button>
-          </div>
+          <LoadMoreSentinel
+            onVisible={() => setVisibleCount(v => Math.min(v + ITEMS_PER_PAGE, filtered.length))}
+            remaining={filtered.length - visibleCount}
+          />
         )}
         {/* Results count summary */}
         {visibleCount >= filtered.length && filtered.length > ITEMS_PER_PAGE && (
