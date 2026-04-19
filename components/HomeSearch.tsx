@@ -48,10 +48,10 @@ export default function HomeSearch() {
   const inputRef = useRef<HTMLInputElement>(null)
   const listboxId = useId()
 
-  const suggestions = useMemo<Suggestion[]>(() => {
+  const { suggestions, totalMatchCount } = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (q.length === 0) return []
-    return spots
+    if (q.length === 0) return { suggestions: [] as Suggestion[], totalMatchCount: 0 }
+    const scored = spots
       .map(s => ({
         id: s.id,
         slug: s.slug,
@@ -64,13 +64,10 @@ export default function HomeSearch() {
       }))
       .filter(s => s.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, MAX_SUGGESTIONS)
-  }, [query])
-
-  const totalMatchCount = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (q.length === 0) return 0
-    return spots.filter(s => matchScore(q, s) > 0).length
+    return {
+      suggestions: scored.slice(0, MAX_SUGGESTIONS),
+      totalMatchCount: scored.length,
+    }
   }, [query])
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
@@ -173,7 +170,8 @@ export default function HomeSearch() {
           />
           <button
             type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-semibold px-5 py-2.5 rounded-xl text-sm transition-all"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-yellow-400 hover:bg-yellow-300 active:scale-95 text-gray-900 font-semibold px-5 py-2.5 rounded-xl text-sm transition-all"
+            aria-label="搜尋景點餐廳"
           >
             搜尋
           </button>

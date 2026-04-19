@@ -198,7 +198,7 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
 
       {/* Hero Image */}
       <div data-spot-hero className="relative h-72 md:h-96 rounded-3xl overflow-hidden bg-gray-200 mb-8">
-        <Image src={spot.image_url} alt={spot.name_zh} fill className="object-cover" priority sizes="(max-width: 1024px) 100vw, 896px" />
+        <Image src={spot.image_url} alt={spot.name_zh} fill className="object-cover" priority fetchPriority="high" sizes="(max-width: 1024px) 100vw, 896px" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         {/* Favorite button overlay */}
         <div className="absolute top-4 right-4">

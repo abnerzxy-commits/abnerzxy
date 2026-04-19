@@ -163,7 +163,7 @@ export async function POST(req: NextRequest) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 4000,
         messages: [
           {
@@ -226,7 +226,10 @@ ${rawContent}
     const claudeData = await claudeRes.json()
     const responseText = claudeData.content?.[0]?.text ?? ''
 
-    // Parse JSON from Claude response
+    // Parse JSON from Claude response (cap at 50KB to prevent abuse)
+    if (responseText.length > 50_000) {
+      return NextResponse.json({ error: 'AI 回傳資料過大' }, { status: 502 })
+    }
     const jsonMatch = responseText.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
       return NextResponse.json({ error: 'AI 回傳格式無法解析，請重試' }, { status: 500 })
@@ -237,6 +240,10 @@ ${rawContent}
       extracted = JSON.parse(jsonMatch[0])
     } catch {
       return NextResponse.json({ error: 'AI 回傳的 JSON 格式無效' }, { status: 500 })
+    }
+
+    if (!extracted.spots || !Array.isArray(extracted.spots)) {
+      return NextResponse.json({ error: 'AI 回傳的資料結構無效' }, { status: 500 })
     }
 
     // Sanitize output to prevent XSS in downstream rendering

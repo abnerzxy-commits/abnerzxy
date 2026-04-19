@@ -49,61 +49,60 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-blue-900/50" aria-hidden="true" />
 
-        {/* Floating decorative elements */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-          <span className="absolute top-[12%] left-[8%] text-4xl md:text-5xl opacity-10 animate-float-1">🏖</span>
-          <span className="absolute top-[20%] right-[10%] text-3xl md:text-4xl opacity-10 animate-float-2">✈️</span>
+        {/* Floating decorative elements — hidden on mobile to reduce visual noise */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden hidden md:block" aria-hidden="true">
+          <span className="absolute top-[12%] left-[8%] text-5xl opacity-10 animate-float-1">🏖</span>
+          <span className="absolute top-[20%] right-[10%] text-4xl opacity-10 animate-float-2">✈️</span>
           <span className="absolute bottom-[25%] left-[15%] text-3xl opacity-[0.08] animate-float-3">🌊</span>
-          <span className="absolute top-[40%] right-[18%] text-2xl md:text-3xl opacity-[0.08] animate-float-1">🎡</span>
-          <span className="absolute bottom-[35%] right-[8%] text-3xl opacity-[0.06] animate-float-2">👶</span>
-          <span className="absolute top-[60%] left-[5%] text-2xl opacity-[0.06] animate-float-3">🍜</span>
+          <span className="absolute top-[40%] right-[18%] text-3xl opacity-[0.08] animate-float-1">🎡</span>
         </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 py-20 md:py-32 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-5 py-2.5 text-sm mb-8 backdrop-blur-sm">
+        <div className="relative max-w-5xl mx-auto px-4 py-14 md:py-32 text-center">
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs md:text-sm mb-4 md:mb-8 backdrop-blur-sm">
             <span aria-hidden="true">👶</span> 專為帶 2-6 歲小孩旅遊設計
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-5">
+          <h1 className="text-2xl md:text-6xl font-bold leading-tight mb-2 md:mb-5">
             帶孩子去<span className="text-yellow-300">釜山</span><br />
             什麼都幫你查好了
           </h1>
-          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-10 leading-relaxed">
-            親子景點・公園遊樂場・無辣餐廳・訂位連結・網友優缺點<br />
-            還有你的專屬 6 天行程
+          <p className="text-sm md:text-xl text-blue-100 max-w-2xl mx-auto mb-4 md:mb-10 leading-relaxed">
+            親子景點・公園遊樂場・無辣餐廳・訂位連結・網友優缺點<br className="hidden sm:inline" />
+            <span className="hidden sm:inline">還有你的專屬 6 天行程</span>
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/spots" className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold px-8 py-4 rounded-2xl text-lg transition-all hover:scale-105 animate-glow">
-              🗺 探索所有景點餐廳
-            </Link>
-            <Link href="/itinerary" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-8 py-4 rounded-2xl text-lg transition-all backdrop-blur-sm hover:scale-105">
-              📅 查看行程安排
-            </Link>
-          </div>
 
-          {/* Search box */}
-          <div className="mt-8 max-w-lg mx-auto">
+          {/* Search box — moved above CTAs for mobile-first UX */}
+          <div className="max-w-lg mx-auto mb-5 md:mb-0 md:order-none">
             <HomeSearch />
           </div>
 
-          {/* Popular search chips */}
-          <div className="mt-5 flex flex-wrap justify-center gap-2 max-w-lg mx-auto">
+          {/* Popular search chips — show top 3 on small screens, all 6 on md+ */}
+          <div className="mt-3 md:mt-5 flex flex-wrap justify-center gap-1.5 md:gap-2 max-w-lg mx-auto mb-4 md:mb-0">
             {[
               { label: '無辣餐廳', q: '無辣', icon: '🌶' },
               { label: '免費景點', q: '免費', icon: '🎫' },
               { label: '海雲台', q: '海雲台', icon: '🏖' },
-              { label: '可訂位', type: 'restaurant', icon: '🪑' },
-              { label: 'IG推薦', type: 'ig', icon: '📸' },
-              { label: '公園', type: 'park', icon: '🌳' },
+              { label: '可訂位', type: 'restaurant', icon: '🪑', hideOnMobile: true },
+              { label: 'IG推薦', type: 'ig', icon: '📸', hideOnMobile: true },
+              { label: '公園', type: 'park', icon: '🌳', hideOnMobile: true },
             ].map(tag => (
               <Link
                 key={tag.label}
                 href={tag.type ? `/spots?type=${tag.type}` : `/spots?q=${encodeURIComponent(tag.q!)}`}
-                className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white/90 hover:text-white text-xs font-medium px-3 py-1.5 rounded-full backdrop-blur-sm transition-all hover:scale-105"
+                className={`inline-flex items-center gap-1 md:gap-1.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white/90 hover:text-white text-xs font-medium px-2.5 py-1 md:px-3 md:py-1.5 rounded-full backdrop-blur-sm transition-all hover:scale-105 ${'hideOnMobile' in tag && tag.hideOnMobile ? 'hidden md:inline-flex' : ''}`}
               >
                 <span aria-hidden="true">{tag.icon}</span>
                 {tag.label}
               </Link>
             ))}
+          </div>
+
+          <div className="flex flex-row gap-3 justify-center">
+            <Link href="/spots" className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold px-5 md:px-8 py-3 md:py-4 rounded-2xl text-sm md:text-lg transition-all hover:scale-105 animate-glow">
+              🗺 探索景點餐廳
+            </Link>
+            <Link href="/itinerary" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-5 md:px-8 py-3 md:py-4 rounded-2xl text-sm md:text-lg transition-all backdrop-blur-sm hover:scale-105">
+              📅 查看行程
+            </Link>
           </div>
         </div>
         {/* Wave decoration */}
@@ -165,7 +164,7 @@ export default function HomePage() {
                     </div>
                   </div>
                   {spot.ticket_price_free && (
-                    <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm">免費</div>
+                    <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm animate-badge-pulse">免費</div>
                   )}
                 </div>
                 <div className="px-4 py-3">
@@ -333,6 +332,31 @@ export default function HomePage() {
               </span>
             </div>
           </Link>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-blue-800 text-white py-16 md:py-20">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <span className="absolute top-[15%] right-[10%] text-6xl opacity-[0.08]">✈️</span>
+          <span className="absolute bottom-[20%] left-[8%] text-5xl opacity-[0.06]">🧳</span>
+        </div>
+        <div className="relative max-w-3xl mx-auto px-4 text-center">
+          <ScrollReveal>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">準備好帶小孩出發了嗎？</h2>
+            <p className="text-blue-200 leading-relaxed mb-8 max-w-lg mx-auto">
+              從選景點、挑餐廳到排行程，<br className="sm:hidden" />我們都幫你整理好了。<br />
+              收藏喜歡的地點，打造你的專屬親子旅行。
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link href="/spots" className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold px-8 py-4 rounded-2xl text-lg transition-all hover:scale-105 shadow-lg">
+                🗺 開始探索
+              </Link>
+              <Link href="/itinerary" className="bg-white/15 hover:bg-white/25 border border-white/30 text-white font-semibold px-8 py-4 rounded-2xl text-lg transition-all backdrop-blur-sm hover:scale-105">
+                📅 查看行程模板
+              </Link>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
     </div>

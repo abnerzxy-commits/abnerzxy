@@ -89,9 +89,10 @@ html {
   overflow: hidden;
 }
 
-/* Improve touch targets on mobile */
+/* Improve touch targets on mobile — only standalone interactive elements, not inline links/chips */
 @media (max-width: 640px) {
-  button, a {
+  button:not(.inline-btn),
+  a:not(.inline-link):not([class*="text-xs"]):not([class*="rounded-full"]) {
     min-height: 44px;
   }
 }
@@ -162,6 +163,18 @@ html {
 }
 .animate-glow { animation: glow-pulse 2.5s ease-in-out infinite; }
 
+/* Subtle pulse for "免費" and status badges */
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+.animate-badge-pulse { animation: badge-pulse 2s ease-in-out infinite; }
+
+/* Card focus-within glow for keyboard navigation */
+.card-interactive:focus-within {
+  box-shadow: 0 0 0 2px #3b82f6, 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
 /* Image skeleton loading */
 .img-skeleton {
   position: relative;
@@ -198,7 +211,8 @@ html {
     scroll-behavior: auto !important;
   }
   .animate-float-1, .animate-float-2, .animate-float-3,
-  .animate-glow, .animate-gradient, .animate-shimmer {
+  .animate-glow, .animate-gradient, .animate-shimmer,
+  .animate-badge-pulse {
     animation: none !important;
   }
 }
