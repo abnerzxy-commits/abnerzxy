@@ -522,11 +522,41 @@ export default async function SpotDetailPage({ params }: { params: Promise<{ slu
         <section id="spot-nearby" className="mt-14">
           <h2 className="text-xl font-bold text-gray-900 mb-2">附近景點推薦</h2>
           <p className="text-sm text-gray-400 mb-6">依照實際距離排序，方便安排同日行程</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Mobile: horizontal scroll carousel; Desktop: grid */}
+          <div className="sm:hidden -mx-4 px-4">
+            <div className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4">
+              {nearbySpots.map(({ spot: s, dist }) => (
+                <Link key={s.id} href={`/spots/${s.slug}`} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-all shrink-0 w-[72vw] max-w-[280px] snap-start">
+                  <div className="relative h-36">
+                    <Image src={s.image_url} alt={s.name_zh} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="280px" loading="lazy" />
+                    <div className="absolute top-2 left-2">
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getTypeColor(s.type)}`}>
+                        {getTypeIcon(s.type)} {typeLabels[s.type]}
+                      </span>
+                    </div>
+                    <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs font-medium text-blue-700 shadow-sm">
+                      {formatDistance(dist)}
+                    </div>
+                  </div>
+                  <div className="p-3">
+                    <p className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors">{s.name_zh}</p>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-xs text-gray-400">{s.district}</span>
+                      {dist < 2 && (
+                        <span className="text-xs text-green-600 font-medium">{walkingTime(dist)}</span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+          {/* Desktop: standard grid */}
+          <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {nearbySpots.map(({ spot: s, dist }) => (
               <Link key={s.id} href={`/spots/${s.slug}`} className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-md transition-all hover:-translate-y-0.5">
                 <div className="relative h-36">
-                  <Image src={s.image_url} alt={s.name_zh} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="350px" />
+                  <Image src={s.image_url} alt={s.name_zh} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="350px" loading="lazy" />
                   <div className="absolute top-2 left-2">
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getTypeColor(s.type)}`}>
                       {getTypeIcon(s.type)} {typeLabels[s.type]}

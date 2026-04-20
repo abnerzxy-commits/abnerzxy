@@ -122,7 +122,7 @@ html {
 }
 .active\:animate-tap:active { animation: tap-bounce 0.15s ease; }
 
-/* Hide scrollbar for horizontal nav */
+/* Hide scrollbar for horizontal nav / carousels */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -130,6 +130,11 @@ html {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Snap scroll for carousels */
+.snap-x { scroll-snap-type: x mandatory; }
+.snap-mandatory { scroll-snap-type: x mandatory; }
+.snap-start { scroll-snap-align: start; }
 
 /* Animated gradient for hero sections */
 @keyframes gradient-shift {

@@ -5,6 +5,7 @@ import { getTypeColor, getTypeIcon } from '@/lib/utils'
 import BreadcrumbSchema from '@/components/BreadcrumbSchema'
 import HomeSearch from '@/components/HomeSearch'
 import ScrollReveal from '@/components/ScrollReveal'
+import CountUp from '@/components/CountUp'
 
 const highlights = [
   { id: 'a1', emoji: '🐠' },
@@ -120,7 +121,7 @@ export default function HomePage() {
             <ScrollReveal key={s.label} delay={i * 80}>
               <Link href={s.href} className={`text-center group bg-gradient-to-br ${s.color} rounded-2xl p-5 border hover:shadow-md hover:-translate-y-1 transition-all duration-200 block cursor-pointer`}>
                 <div className="text-3xl mb-2 group-hover:scale-110 transition-transform duration-200" aria-hidden="true">{s.icon}</div>
-                <div className={`text-3xl font-bold ${s.accent} transition-colors`}>{s.value}</div>
+                <CountUp value={s.value} className={`text-3xl font-bold ${s.accent} transition-colors`} />
                 <div className="text-sm text-gray-500 mt-1 font-medium group-hover:text-gray-700 transition-colors">{s.label}</div>
               </Link>
             </ScrollReveal>
